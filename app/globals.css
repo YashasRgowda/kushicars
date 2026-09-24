@@ -1,0 +1,409 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700;6..96,800&family=Jost:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    /* One easing across the whole site — motion that feels authored, not default. */
+    --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Bodoni is a variable optical-size face; let it size its contrast. */
+    font-optical-sizing: auto;
+  }
+
+  body {
+    @apply bg-ink-950 text-slate-100 font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Bodoni's thin strokes shimmer when browsers snap them to the pixel grid. */
+  .font-display {
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-accent text-white;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/70 ring-offset-2 ring-offset-ink-950;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ink-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-600 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-500;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* ---------------------------------------------------------------
+     Type treatments
+     --------------------------------------------------------------- */
+
+  /* Brushed-metal sheen for hero headlines. Light falls from above, so the
+     highlight sits high and the shadow low — same as a real chrome badge. */
+  .chrome-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      177deg,
+      #ffffff 0%,
+      #f3f1ec 26%,
+      #a8b0be 52%,
+      #eceae5 68%,
+      #ffffff 100%
+    );
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      110deg,
+      #ffffff 0%,
+      #cbd5e1 30%,
+      #f87171 50%,
+      #cbd5e1 70%,
+      #ffffff 100%
+    );
+    background-size: 220% auto;
+    animation: gradient-pan 7s ease-in-out infinite;
+  }
+
+  @keyframes gradient-pan {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* ---------------------------------------------------------------
+     Surfaces & materials
+     --------------------------------------------------------------- */
+
+  /* Real film grain. A turbulence field beats a dot pattern — it has no
+     repeating tell at any zoom, which is what makes the black look deep. */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .grain {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+    background-size: 3px 3px;
+  }
+
+  /* A border that fades — catches light at the top edge and dissolves at the
+     bottom, the way a lit panel actually reads. Flat 1px borders look cheap. */
+  .hairline {
+    position: relative;
+  }
+  .hairline::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.06) 28%,
+      rgba(255, 255, 255, 0.02) 55%,
+      rgba(255, 255, 255, 0.07) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hairline-accent::before {
+    background: linear-gradient(
+      160deg,
+      rgba(248, 113, 113, 0.55) 0%,
+      rgba(220, 38, 38, 0.18) 30%,
+      rgba(255, 255, 255, 0.04) 60%,
+      rgba(220, 38, 38, 0.22) 100%
+    );
+  }
+
+  /* Frosted panel with a lit top edge. */
+  .glass {
+    @apply bg-white/[0.035] backdrop-blur-xl;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+      0 24px 60px -24px rgba(0, 0, 0, 0.9);
+  }
+
+  /* Darkens the frame edges so the eye is pulled to the centre. */
+  .vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      110% 85% at 50% 45%,
+      transparent 40%,
+      rgba(4, 5, 7, 0.55) 100%
+    );
+  }
+
+  /* ---------------------------------------------------------------
+     Masks
+     --------------------------------------------------------------- */
+
+  .reveal-mask {
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+    mask-image: linear-gradient(180deg, #000 60%, transparent);
+  }
+
+  /* Softens the hard cut where a marquee leaves the viewport. */
+  .mask-x {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
+  }
+
+  /* 3D scene root. Children with translateZ get true perspective. */
+  .scene {
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.06),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* ---------------------------------------------------------------
+     Range sliders (finance calculator)
+     --------------------------------------------------------------- */
+
+  .range-premium {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
+  }
+  .range-premium::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #cfd4dd 60%, #9aa3b2);
+    border: none;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.6),
+      0 6px 16px -4px rgba(0, 0, 0, 0.8),
+      0 0 0 0 rgba(220, 38, 38, 0.35);
+    transition:
+      transform 0.18s var(--ease-premium),
+      box-shadow 0.18s var(--ease-premium);
+  }
+  .range-premium:hover::-webkit-slider-thumb,
+  .range-premium:focus-visible::-webkit-slider-thumb {
+    transform: scale(1.16);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.6),
+      0 6px 16px -4px rgba(0, 0, 0, 0.8),
+      0 0 0 8px rgba(220, 38, 38, 0.16);
+  }
+  .range-premium::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border: none;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #cfd4dd 60%, #9aa3b2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 6px 16px -4px rgba(0, 0, 0, 0.8);
+  }
+
+  /* ---------------------------------------------------------------
+     Dual-thumb price range (collection filters)
+
+     Two native <input type="range"> stacked over one painted track. The
+     inputs themselves are invisible and ignore the pointer; only their
+     thumbs take events, so whichever handle you are nearest is the one
+     that grabs. Native inputs keep keyboard and screen-reader support.
+     --------------------------------------------------------------- */
+
+  .range-dual__track,
+  .range-dual__fill {
+    position: absolute;
+    top: 50%;
+    height: 3px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .range-dual__track {
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .range-dual__fill {
+    background: linear-gradient(90deg, #7f1220, #dc2626);
+  }
+
+  .range-dual input[type='range'] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+  }
+  .range-dual input[type='range']:focus-visible {
+    outline: none;
+  }
+  .range-dual input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    height: 16px;
+    width: 16px;
+    border-radius: 999px;
+    cursor: grab;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe2 62%, #9aa3b2);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.7),
+      0 4px 10px -2px rgba(0, 0, 0, 0.8);
+    transition:
+      transform 0.18s var(--ease-premium),
+      box-shadow 0.18s var(--ease-premium);
+  }
+  .range-dual input[type='range']:hover::-webkit-slider-thumb,
+  .range-dual input[type='range']:focus-visible::-webkit-slider-thumb {
+    transform: scale(1.15);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.7),
+      0 4px 10px -2px rgba(0, 0, 0, 0.8),
+      0 0 0 7px rgba(220, 38, 38, 0.16);
+  }
+  .range-dual input[type='range']::-moz-range-thumb {
+    pointer-events: auto;
+    height: 16px;
+    width: 16px;
+    border: none;
+    border-radius: 999px;
+    cursor: grab;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe2 62%, #9aa3b2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 4px 10px -2px rgba(0, 0, 0, 0.8);
+  }
+  .range-dual input[type='range']::-moz-range-track {
+    background: transparent;
+  }
+
+  /* Google's embed has no dark style without the paid JS API, and a sheet of
+     white map against this page is the one thing on it that looks unfinished.
+     Inverting and rotating the hue back gives a usable dark map: roads stay
+     lighter than land, and the labels stay legible. */
+  .map-dark {
+    filter: invert(0.92) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+  }
+
+  /* A scrollbar for panels inside the page — the 10px chrome one is far
+     too loud on a sticky filter rail sitting beside the content. */
+  .scroll-slim {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+  .scroll-slim::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scroll-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-slim::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+  }
+  .scroll-slim:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  /* Hides the number-input spinners on the sell form's rupee fields. */
+  .no-spin::-webkit-outer-spin-button,
+  .no-spin::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .no-spin {
+    -moz-appearance: textfield;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
