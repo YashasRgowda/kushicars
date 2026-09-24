@@ -30,10 +30,18 @@ export default function HomeClient({
 }) {
   const [ready, setReady] = useState(false);
 
-  // The most expensive car in stock leads the showcase, unless one is tagged.
+  // The showcase leads with the flagship: the dearest car the owner has
+  // tagged Featured, falling back to the dearest car on the floor. Taking
+  // simply the FIRST tagged car meant showroom order decided which car got
+  // the set piece, so a ₹7 lakh hatchback could outrank a Fortuner.
   const hero =
-    cars.find((c) => c.tag === 'Featured' && c.image) ??
-    [...cars].sort((a, b) => b.price - a.price)[0];
+    [...cars]
+      .filter((c) => c.image)
+      .sort(
+        (a, b) =>
+          Number(b.tag === 'Featured') - Number(a.tag === 'Featured') ||
+          b.price - a.price,
+      )[0] ?? cars[0];
 
   return (
     <>

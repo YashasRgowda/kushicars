@@ -59,8 +59,11 @@ export default function EnquiryPanel({
             rel="noopener noreferrer"
             className="flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-6 py-4 text-sm font-500 text-white shadow-lift-accent transition-transform duration-300 ease-premium hover:scale-[1.02]"
           >
-            <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
-            Ask about this car on WhatsApp
+            <MessageCircle className="h-4 w-4 shrink-0" strokeWidth={1.8} />
+            {/* The full sentence wraps to two lines on a phone, which makes
+                the primary button look like a paragraph. */}
+            <span className="hidden sm:inline">Ask about this car on WhatsApp</span>
+            <span className="sm:hidden">Ask on WhatsApp</span>
           </a>
         )}
 
