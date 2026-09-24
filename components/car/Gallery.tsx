@@ -91,7 +91,7 @@ export default function Gallery({ car }: { car: Car }) {
       {/* ---------------- Stage ---------------- */}
       <div
         ref={stageRef}
-        className="hairline group relative aspect-[3/2] w-full overflow-hidden rounded-2xl bg-ink-850"
+        className="hairline group relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-ink-900"
       >
         <Slides
           photos={photos}
@@ -144,8 +144,11 @@ export default function Gallery({ car }: { car: Car }) {
           index={index}
           onPick={jump}
           scope="stage"
-          className="mt-3 grid grid-cols-6 gap-2.5"
-          sizes="(min-width: 1024px) 9vw, 16vw"
+          className="mt-3 grid gap-2.5"
+          style={{
+            gridTemplateColumns: `repeat(${Math.min(count, 6)}, minmax(0, 1fr))`,
+          }}
+          sizes="(min-width: 1024px) 12vw, 22vw"
         />
       )}
 
@@ -385,6 +388,7 @@ function Thumbs({
   onPick,
   scope,
   className,
+  style,
   sizes,
 }: {
   photos: string[];
@@ -392,11 +396,12 @@ function Thumbs({
   onPick: (i: number) => void;
   scope: string;
   className: string;
+  style?: React.CSSProperties;
   sizes: string;
 }) {
   return (
     <LayoutGroup id={`thumbs-${scope}`}>
-      <div className={className}>
+      <div className={className} style={style}>
         {photos.map((src, n) => (
           <button
             key={src}
@@ -404,7 +409,7 @@ function Thumbs({
             onClick={() => onPick(n)}
             aria-label={`Show photo ${n + 1}`}
             aria-current={n === index}
-            className="group/thumb relative aspect-[4/3] overflow-hidden rounded-lg"
+            className="group/thumb relative aspect-[16/10] overflow-hidden rounded-lg bg-ink-900"
           >
             <Image
               src={src}
@@ -530,8 +535,11 @@ function Lightbox({
             index={index}
             onPick={onPick}
             scope="lightbox"
-            className="mx-auto grid max-w-2xl grid-cols-6 gap-2"
-            sizes="12vw"
+            className="mx-auto grid max-w-xl gap-2"
+            style={{
+              gridTemplateColumns: `repeat(${Math.min(count, 6)}, minmax(0, 1fr))`,
+            }}
+            sizes="14vw"
           />
         </div>
       )}
@@ -542,7 +550,7 @@ function Lightbox({
 /** No photos yet — say so plainly rather than showing a broken frame. */
 function EmptyPlate({ car }: { car: Car }) {
   return (
-    <div className="hairline relative flex aspect-[3/2] w-full items-center justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#181c26_0%,#0b0d12_55%,#11141b_100%)]">
+    <div className="hairline relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#181c26_0%,#0b0d12_55%,#11141b_100%)]">
       <div
         aria-hidden
         className="absolute -right-10 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-accent/10 blur-[90px]"
