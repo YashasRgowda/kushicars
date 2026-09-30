@@ -178,10 +178,13 @@ export function Magnetic({
 export function Eyebrow({
   children,
   centered = false,
+  delay = 0,
   className = '',
 }: {
   children: ReactNode;
   centered?: boolean;
+  /** Its slot in a composed cascade — see PageHeader. */
+  delay?: number;
   className?: string;
 }) {
   return (
@@ -189,17 +192,17 @@ export function Eyebrow({
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-10%' }}
-      transition={{ duration: 0.7, ease: EASE }}
+      transition={{ duration: 0.7, ease: EASE, delay }}
       className={`flex items-center gap-4 ${centered ? 'justify-center' : ''} ${className}`}
     >
       <motion.span
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
-        className="h-px w-12 origin-left bg-gradient-to-r from-accent to-accent/20"
+        transition={{ duration: 0.9, ease: EASE, delay: delay + 0.1 }}
+        className="h-px w-12 origin-left bg-gradient-to-r from-gold to-gold/20"
       />
-      <span className="text-[11px] font-500 uppercase tracking-eyebrow text-slate-400">
+      <span className="text-[11px] font-500 uppercase tracking-eyebrow text-stone-700">
         {children}
       </span>
       {centered && (
@@ -207,8 +210,8 @@ export function Eyebrow({
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, margin: '-10%' }}
-          transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
-          className="h-px w-12 origin-right bg-gradient-to-l from-accent to-accent/20"
+          transition={{ duration: 0.9, ease: EASE, delay: delay + 0.1 }}
+          className="h-px w-12 origin-right bg-gradient-to-l from-gold to-gold/20"
         />
       )}
     </motion.div>

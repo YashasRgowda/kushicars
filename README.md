@@ -29,6 +29,7 @@ Run these once, in order, in the Supabase SQL Editor:
 | `supabase/schema.sql` | `cars` and `settings` tables, storage bucket, row-level security |
 | `supabase/002_leads.sql` | `sell_requests` and `enquiries`, plus the private seller-photo bucket |
 | `supabase/003_kushi_settings.sql` | Real name, address, phone and hours |
+| `supabase/004_showcase.sql` | The `showcase` flag — which car leads the home page |
 | `supabase/seed.sql` | Optional demo stock — skip it if real cars are being added |
 
 All are safe to re-run.
@@ -58,6 +59,10 @@ owner his own account rather than sharing one.
 
 - **Contact details, hours and the WhatsApp number** live in the database, not
   in the code. Change them at `/admin/settings`.
+- **The car in the big panel on the home page** is chosen per car in the admin
+  panel — "Lead the home page with this car". Only one car holds it at a time.
+  With none chosen, the site falls back to the dearest Featured car that has a
+  photograph, which is what it always used to do.
 - **Deploying:** set `NEXT_PUBLIC_SITE_URL` to the live domain, or the sitemap
   and share links will point at `localhost`.
 - **Photos:** at most six per car (`lib/photos.ts`), resized in the browser
@@ -65,6 +70,11 @@ owner his own account rather than sharing one.
 - **Reviews** in `lib/testimonials.ts` are real Google reviews under real
   names. The note at the top of that file explains what may and may not be
   edited.
-- The demo car photographs in `public/cars/` are Wikimedia Commons placeholders
-  — see `public/cars/ATTRIBUTION.md`. Delete them, and the credit line in the
-  footer, once the owner's own photographs replace them.
+- **The demo car photographs in `public/cars/` are Wikimedia Commons
+  placeholders** — see `public/cars/ATTRIBUTION.md`. The on-page credit line
+  has been removed from the footer at the owner's request, so these MUST be
+  replaced with Kushi Cars' own photographs before the site goes live: CC BY
+  and CC BY-SA both require attribution wherever the photograph is published.
+  Upload the real ones per car at `/admin`, then delete `public/cars/`.
+- The footer carries a maker's credit that opens WhatsApp. The number and the
+  opening message are the `MAKER` constant at the top of `components/Footer.tsx`.

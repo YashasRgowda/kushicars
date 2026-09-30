@@ -36,3 +36,14 @@ wherever Commons had a matching set — so a listing never shows four different
 colours of the same car. Some interiors come from a different example of the
 same model, which is normal for a demo but would not be acceptable once real
 stock is listed.
+
+## Hero footage
+
+`public/hero.webm` / `hero.mp4` / `hero-poster.jpg` — black Land Rover Defender
+at golden hour, by Zakaria Boumliha, via Pexels:
+https://www.pexels.com/video/a-black-land-rover-defender-parked-in-a-field-12839189/
+
+Pexels licence: free for commercial use, no attribution required. Recorded here
+only so it is obvious this is placeholder footage to be swapped for Kushi Cars'
+own. The clip is the source cut forward-then-reversed so it loops seamlessly —
+a straight loop of a push-in jumps visibly every pass.

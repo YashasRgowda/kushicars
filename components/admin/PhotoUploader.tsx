@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ImagePlus, Loader2, Star, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import {
@@ -26,14 +26,27 @@ const BUCKET = 'car-photos';
 export default function PhotoUploader({
   name = 'photos',
   initial = [],
+  onChange,
 }: {
   name?: string;
   initial?: string[];
+  /** Lets the form mirror the set — the live preview reads it. */
+  onChange?: (photos: string[]) => void;
 }) {
   const [photos, setPhotos] = useState<string[]>(initial);
   const [busy, setBusy] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // A hidden input's value changing does not raise a change event, so the
+  // form cannot see this the way it sees every other field. Tell it.
+  const notify = useRef(onChange);
+  useEffect(() => {
+    notify.current = onChange;
+  });
+  useEffect(() => {
+    notify.current?.(photos);
+  }, [photos]);
 
   const room = MAX_PHOTOS - photos.length;
   const full = room <= 0;
@@ -111,36 +124,36 @@ export default function PhotoUploader({
     <div>
       <input type="hidden" name={name} value={JSON.stringify(photos)} />
 
-      <div className="mb-4 flex items-baseline justify-between gap-4">
-        <p className="text-sm text-slate-300">
-          <span className="font-600 tabular-nums text-white">{photos.length}</span>
-          <span className="text-slate-500"> / {MAX_PHOTOS} photos</span>
+      <div className="mb-5 flex items-baseline justify-between gap-4">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-stone-600">
+          <span className="tabular-nums text-ink-900">{photos.length}</span> of{' '}
+          {MAX_PHOTOS} photos
         </p>
         {/* A slim meter — the limit is visible before anyone hits it. */}
         <div className="flex gap-1" aria-hidden>
           {Array.from({ length: MAX_PHOTOS }).map((_, i) => (
             <span
               key={i}
-              className={`h-1 w-5 rounded-full transition-colors ${
-                i < photos.length ? 'bg-accent' : 'bg-white/10'
+              className={`h-0.5 w-6 rounded-full transition-colors duration-300 ${
+                i < photos.length ? 'bg-accent' : 'bg-paper-300'
               }`}
             />
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3">
         {photos.map((url, i) => (
           <div
             key={url}
-            className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-white/10 bg-ink-800"
+            className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-paper-300 transition-colors duration-300 hover:border-line-strong"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={url} alt="" className="h-full w-full object-cover" />
 
             <span
-              className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-600 uppercase tracking-wider ${
-                i === 0 ? 'bg-accent text-white' : 'bg-black/60 text-slate-200'
+              className={`absolute left-2.5 top-2.5 rounded-full px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] ${
+                i === 0 ? 'bg-accent text-white' : 'bg-black/55 text-white backdrop-blur-md'
               }`}
             >
               {i === 0 ? 'Cover' : i + 1}
@@ -179,7 +192,7 @@ export default function PhotoUploader({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={!!busy}
-            className="grid aspect-[4/3] place-items-center rounded-xl border border-dashed border-white/20 text-slate-400 transition-colors hover:border-accent/50 hover:text-white disabled:cursor-wait disabled:opacity-60"
+            className="grid aspect-[4/3] place-items-center rounded-2xl border border-dashed border-line text-stone-700 transition-colors duration-300 hover:border-accent hover:bg-paper hover:text-ink-900 disabled:cursor-wait disabled:opacity-60"
           >
             {busy ? (
               <span className="flex flex-col items-center gap-2 text-xs">
@@ -190,7 +203,7 @@ export default function PhotoUploader({
               <span className="flex flex-col items-center gap-1.5 text-xs">
                 <ImagePlus className="h-5 w-5" />
                 Add photos
-                <span className="text-slate-600">{room} left</span>
+                <span className="text-muted">{room} left</span>
               </span>
             )}
           </button>
@@ -206,15 +219,14 @@ export default function PhotoUploader({
         onChange={(e) => handleFiles(e.target.files)}
       />
 
-      <p className="mt-3 text-xs leading-relaxed text-slate-500">
-        Up to {MAX_PHOTOS} photos. The first is the cover shown in listings. A
-        good set: front, rear, side, interior, boot, and the dashboard with the
-        odometer on. Photos are resized automatically — upload straight from
-        your phone.
+      <p className="mt-4 max-w-md text-[13px] leading-relaxed text-stone-600">
+        A good set is front, rear, side, interior, boot, and the dashboard with
+        the odometer lit. Upload straight from your phone — they are resized
+        for you.
       </p>
 
       {error && (
-        <p role="alert" className="mt-2 text-xs text-accent-glow">
+        <p role="alert" className="mt-3 text-[13px] text-danger-ink">
           {error}
         </p>
       )}
@@ -242,8 +254,8 @@ function IconBtn({
       disabled={disabled}
       title={label}
       aria-label={label}
-      className={`grid h-7 w-7 place-items-center rounded-full text-white transition-colors disabled:opacity-30 ${
-        danger ? 'bg-accent/90 hover:bg-accent' : 'bg-white/15 hover:bg-white/30'
+      className={`grid h-8 w-8 place-items-center rounded-full text-white backdrop-blur-md transition-colors duration-200 disabled:opacity-25 ${
+        danger ? 'bg-black/55 hover:bg-danger' : 'bg-black/45 hover:bg-white/30'
       }`}
     >
       {children}

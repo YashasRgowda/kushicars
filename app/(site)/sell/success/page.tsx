@@ -42,20 +42,20 @@ export default async function SellSuccessPage({
   return (
     <div className="mx-auto max-w-3xl px-6 pb-32 pt-40 lg:pb-44 lg:pt-48">
       <Reveal>
-        <CheckCircle2 className="h-11 w-11 text-emerald-400" strokeWidth={1.25} />
-        <h1 className="mt-8 font-display text-display-sm font-600 leading-tight text-white">
+        <CheckCircle2 className="h-11 w-11 text-accent-soft" strokeWidth={1.25} />
+        <h1 className="mt-8 font-display text-display-sm font-600 leading-tight text-ink-900">
           We have your car.
         </h1>
-        <p className="mt-6 max-w-xl text-pretty text-[17px] leading-relaxed text-slate-400">
+        <p className="mt-6 max-w-xl text-pretty text-[17px] leading-relaxed text-stone-700">
           Thank you — the details are with us. Keep this reference handy if you
           call; it saves you repeating everything.
         </p>
 
-        <p className="mt-8 inline-flex items-baseline gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-3.5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+        <p className="mt-8 inline-flex items-baseline gap-3 rounded-xl border border-line bg-paper px-5 py-3.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
             Reference
           </span>
-          <span className="font-display text-xl font-600 tracking-wide text-white">
+          <span className="font-display text-xl font-600 tracking-wide text-ink-900">
             {reference}
           </span>
         </p>
@@ -68,8 +68,8 @@ export default async function SellSuccessPage({
       </Reveal>
 
       {/* ---------------- What happens next ---------------- */}
-      <section className="mt-24 border-t border-white/[0.07] pt-14">
-        <h2 className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+      <section className="mt-24 border-t border-line-soft pt-14">
+        <h2 className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-600">
           What happens next
         </h2>
 
@@ -78,18 +78,18 @@ export default async function SellSuccessPage({
             <Reveal key={n.when} delay={i * 0.07}>
               <li className="grid gap-2 sm:grid-cols-[11rem_1fr] sm:gap-8">
                 <p className="text-[13px] leading-relaxed text-accent">{n.when}</p>
-                <p className="text-pretty leading-relaxed text-slate-300">{n.what}</p>
+                <p className="text-pretty leading-relaxed text-stone-800">{n.what}</p>
               </li>
             </Reveal>
           ))}
         </ol>
       </section>
 
-      <div className="mt-16 flex flex-wrap items-center gap-4 border-t border-white/[0.07] pt-10">
+      <div className="mt-16 flex flex-wrap items-center gap-4 border-t border-line-soft pt-10">
         {settings.phone && (
           <a
             href={telHref(settings.phone)}
-            className="flex items-center gap-2.5 rounded-full border border-white/12 px-6 py-3.5 text-sm text-slate-200 transition-colors hover:border-white/30 hover:text-white"
+            className="flex items-center gap-2.5 rounded-full border border-line px-6 py-3.5 text-sm text-stone-800 transition-colors hover:border-line-strong hover:text-ink-900"
           >
             <Phone className="h-4 w-4 text-accent" strokeWidth={1.5} />
             <span className="tabular-nums">{settings.phone}</span>
@@ -97,7 +97,7 @@ export default async function SellSuccessPage({
         )}
         <Link
           href="/cars"
-          className="text-sm text-slate-400 underline-offset-4 transition-colors hover:text-white hover:underline"
+          className="text-sm text-stone-700 underline-offset-4 transition-colors hover:text-ink-900 hover:underline"
         >
           Have a look at what we have in stock
         </Link>

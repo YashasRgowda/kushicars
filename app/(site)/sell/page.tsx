@@ -55,28 +55,27 @@ export default function SellPage() {
         eyebrow="Sell your car"
         title="Get a straight price for your car"
         lede="We buy as much as we sell. Tell us what you have and we will inspect it free, make you a firm offer the same day, and handle the loan closure and RC transfer ourselves."
-        crumbs={[{ label: 'Home', href: '/' }, { label: 'Sell your car' }]}
       />
 
       {/* ---------------- How it works ---------------- */}
       <section className="mx-auto max-w-7xl px-6 pb-8 lg:px-10">
-        <div className="grid gap-x-8 gap-y-12 border-t border-white/[0.07] pt-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-x-8 gap-y-12 border-t border-line-soft pt-14 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08}>
               <div>
                 <div className="flex items-center gap-3">
                   <s.icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
-                  <span className="font-mono text-[10px] tabular-nums tracking-[0.2em] text-slate-600">
+                  <span className="font-mono text-[10px] tabular-nums tracking-[0.2em] text-muted">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                 </div>
-                <h2 className="mt-5 font-display text-lg font-600 text-white">
+                <h2 className="mt-5 font-display text-lg font-600 text-ink-900">
                   {s.title}
                 </h2>
-                <p className="mt-3 text-pretty text-[14px] leading-relaxed text-slate-400">
+                <p className="mt-3 text-pretty text-[14px] leading-relaxed text-stone-700">
                   {s.body}
                 </p>
-                <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-600">
+                <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
                   {s.meta}
                 </p>
               </div>

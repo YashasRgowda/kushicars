@@ -33,14 +33,14 @@ export default function ProgressRail({
           squashed one reads as clutter. */}
       <div className="sm:hidden">
         <div className="flex items-baseline justify-between">
-          <p className="font-display text-lg font-600 text-white">
+          <p className="font-display text-lg font-600 text-ink-900">
             {SELL_STEPS[current - 1].title}
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600">
             Step {current} of {SELL_STEPS.length}
           </p>
         </div>
-        <div className="mt-3 h-0.5 overflow-hidden rounded-full bg-white/10">
+        <div className="mt-3 h-0.5 overflow-hidden rounded-full bg-paper-300">
           <motion.div
             className="h-full bg-accent"
             initial={false}
@@ -52,7 +52,7 @@ export default function ProgressRail({
 
       {/* Desktop */}
       <div className="relative hidden sm:block">
-        <div className="absolute left-0 right-0 top-[15px] h-px bg-white/10" />
+        <div className="absolute left-0 right-0 top-[15px] h-px bg-line-strong" />
         <motion.div
           className="absolute left-0 top-[15px] h-px bg-accent"
           initial={false}
@@ -77,8 +77,8 @@ export default function ProgressRail({
                     active
                       ? 'border-accent bg-accent text-white shadow-glow'
                       : done
-                        ? 'border-accent/50 bg-ink-950 text-accent'
-                        : 'border-white/15 bg-ink-950 text-slate-600'
+                        ? 'border-accent bg-paper text-accent'
+                        : 'border-line-strong bg-paper text-muted'
                   } ${reachable ? 'cursor-pointer' : 'cursor-default'}`}
                 >
                   {done && !active ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.id}
@@ -86,7 +86,7 @@ export default function ProgressRail({
                 <span className="w-24">
                   <span
                     className={`block text-[13px] transition-colors duration-300 ${
-                      active ? 'text-white' : 'text-slate-500'
+                      active ? 'text-ink-900' : 'text-stone-600'
                     }`}
                   >
                     {s.title}

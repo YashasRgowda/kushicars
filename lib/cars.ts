@@ -19,8 +19,10 @@ interface CarRow {
   registration: string | null;
   tag: Tag | null;
   sold: boolean;
+  showcase: boolean | null;
   photos: string[] | null;
   sort_order: number;
+  created_at: string;
 }
 
 function toCar(r: CarRow): Car {
@@ -43,6 +45,11 @@ function toCar(r: CarRow): Car {
     registration: r.registration,
     tag: r.tag ?? undefined,
     sold: r.sold,
+    // Reads have to survive the column not existing yet, so that a
+    // deployment that lands before the migration simply falls back.
+    showcase: r.showcase ?? false,
+    sortOrder: r.sort_order,
+    createdAt: r.created_at,
     photos,
     image: photos[0],
   };
@@ -146,6 +153,29 @@ export function pickSimilar(all: Car[], car: Car, limit = 3): Car[] {
     .sort((a, b) => b.score - a.score || a.gap - b.gap)
     .slice(0, limit)
     .map((x) => x.car);
+}
+
+/**
+ * The car that holds the feature panel on the home page.
+ *
+ * The owner picks it in the panel. When nobody has been picked — or the one
+ * that was picked has just been sold — this falls back to what the home page
+ * used to work out on its own: the dearest Featured car with a photograph.
+ * The section is never empty while there is stock.
+ */
+export function pickShowcase(cars: Car[]): Car | null {
+  const chosen = cars.find((c) => c.showcase && !c.sold);
+  if (chosen) return chosen;
+
+  const fallback = [...cars]
+    .filter((c) => !c.sold && c.image)
+    .sort(
+      (a, b) =>
+        Number(b.tag === 'Featured') - Number(a.tag === 'Featured') ||
+        b.price - a.price,
+    )[0];
+
+  return fallback ?? cars[0] ?? null;
 }
 
 /** Brands that actually have stock, in showroom order. */

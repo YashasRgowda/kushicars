@@ -35,12 +35,12 @@ export default function Browse({ cars, brands }: { cars: Car[]; brands: Brand[] 
         <aside className="hidden lg:block">
           <div className="sticky top-28">
             <div className="flex items-baseline justify-between">
-              <h2 className="font-display text-lg font-600 text-white">Refine</h2>
+              <h2 className="font-display text-lg font-600 text-ink-900">Refine</h2>
               {!isDefault(filters) && (
                 <button
                   type="button"
                   onClick={reset}
-                  className="text-xs text-slate-500 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  className="text-xs text-stone-600 underline-offset-4 transition-colors hover:text-ink-900 hover:underline"
                 >
                   Reset
                 </button>
@@ -63,12 +63,12 @@ export default function Browse({ cars, brands }: { cars: Car[]; brands: Brand[] 
         {/* ---------------- Results ---------------- */}
         <div className="min-w-0">
           {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.07] pb-5">
-            <p className="text-sm text-slate-400">
-              <span className="font-600 tabular-nums text-white">{results.length}</span>{' '}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft pb-5">
+            <p className="text-sm text-stone-700">
+              <span className="font-600 tabular-nums text-ink-900">{results.length}</span>{' '}
               {results.length === 1 ? 'car' : 'cars'}
               {!isDefault(filters) && (
-                <span className="text-slate-500"> of {cars.length}</span>
+                <span className="text-stone-600"> of {cars.length}</span>
               )}
             </p>
 
@@ -76,7 +76,7 @@ export default function Browse({ cars, brands }: { cars: Car[]; brands: Brand[] 
               <button
                 type="button"
                 onClick={() => setSheetOpen(true)}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] py-2.5 pl-4 pr-5 text-sm text-slate-200 lg:hidden"
+                className="flex items-center gap-2 rounded-full border border-line bg-paper py-2.5 pl-4 pr-5 text-sm text-stone-800 lg:hidden"
               >
                 <SlidersHorizontal className="h-4 w-4" strokeWidth={1.5} />
                 Filters
@@ -142,10 +142,10 @@ function Empty({ onReset }: { onReset: () => void }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE }}
-      className="mt-10 rounded-3xl border border-dashed border-white/10 px-8 py-24 text-center"
+      className="mt-10 rounded-3xl border border-dashed border-line px-8 py-24 text-center"
     >
-      <p className="font-display text-2xl text-white">Nothing matches that combination</p>
-      <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-relaxed text-slate-400">
+      <p className="font-display text-2xl text-ink-900">Nothing matches that combination</p>
+      <p className="mx-auto mt-3 max-w-md text-pretty text-sm leading-relaxed text-stone-700">
         Stock moves quickly here. Tell us what you are looking for and we will
         source it — most requests are filled within a fortnight.
       </p>
@@ -153,13 +153,13 @@ function Empty({ onReset }: { onReset: () => void }) {
         <button
           type="button"
           onClick={onReset}
-          className="rounded-full bg-platinum px-6 py-3 text-sm font-500 text-ink-950 transition-transform duration-300 ease-premium hover:scale-[1.04]"
+          className="rounded-full bg-accent px-6 py-3 text-sm font-500 text-white transition-transform duration-300 ease-premium hover:scale-[1.04]"
         >
           Clear filters
         </button>
         <Link
           href="/contact"
-          className="rounded-full border border-white/12 px-6 py-3 text-sm text-slate-200 transition-colors hover:border-white/30 hover:text-white"
+          className="rounded-full border border-line px-6 py-3 text-sm text-stone-800 transition-colors hover:border-line-strong hover:text-ink-900"
         >
           Tell us what you want
         </Link>

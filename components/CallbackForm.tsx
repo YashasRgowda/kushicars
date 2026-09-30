@@ -34,12 +34,12 @@ export default function CallbackForm({ settings }: { settings: Settings }) {
     );
 
     return (
-      <div className="hairline flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/[0.03] p-10 text-center">
-        <CheckCircle2 className="h-9 w-9 text-emerald-400" strokeWidth={1.25} />
-        <p className="font-display text-2xl font-600 text-white">
+      <div className="hairline flex flex-col items-center justify-center gap-4 rounded-2xl bg-paper p-10 text-center">
+        <CheckCircle2 className="h-9 w-9 text-accent-soft" strokeWidth={1.25} />
+        <p className="font-display text-2xl font-600 text-ink-900">
           We will call you back
         </p>
-        <p className="max-w-xs text-pretty text-sm leading-relaxed text-slate-400">
+        <p className="max-w-xs text-pretty text-sm leading-relaxed text-stone-700">
           Usually the same day. If you would rather not wait, message us
           directly — the showroom answers WhatsApp faster than the phone.
         </p>
@@ -81,7 +81,7 @@ export default function CallbackForm({ settings }: { settings: Settings }) {
         placeholder="Automatic SUV under ₹15 lakh"
       />
 
-      {state.error && <p className="text-[13px] text-accent-soft">{state.error}</p>}
+      {state.error && <p className="text-[13px] text-danger-ink">{state.error}</p>}
 
       <button
         type="submit"
@@ -93,7 +93,7 @@ export default function CallbackForm({ settings }: { settings: Settings }) {
           <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-premium group-hover:translate-x-1" />
         )}
       </button>
-      <p className="text-center text-xs text-slate-500">
+      <p className="text-center text-xs text-stone-600">
         No spam, and no follow-up calls you did not ask for.
       </p>
     </form>

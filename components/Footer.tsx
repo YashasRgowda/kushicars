@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   MapPin,
   Phone,
@@ -9,24 +10,64 @@ import {
   Navigation,
 } from 'lucide-react';
 import type { Settings } from '@/lib/types';
-import { dealerNumber, telHref } from '@/lib/whatsapp';
+import { dealerNumber, telHref, waTo } from '@/lib/whatsapp';
 import { Eyebrow, Magnetic, Reveal, SplitText } from './ui/motion';
+import WhatsAppMark from './icons/WhatsAppMark';
 import Wordmark from './Wordmark';
 import CallbackForm from './CallbackForm';
+
+/**
+ * Who built the site.
+ *
+ * The credit is a WhatsApp hand-off rather than a link to a homepage,
+ * because the person it is aimed at — another shop owner who has just
+ * scrolled this whole page and thought "I want one of these" — will send a
+ * message tonight and will not fill in a contact form tomorrow. The opening
+ * line names which site they are calling about, so an unknown number
+ * arriving at 11pm is answerable straight away.
+ */
+/**
+ * Routes that already close with their own visit-us block.
+ *
+ * About ends on "Come and have a look", carrying the address, the hours and
+ * the phone number. Contact is that invitation for a whole page — address,
+ * map, hours, directions and an enquiry form. Following either with the
+ * footer's "Come and see it in person" is the same invitation twice inside
+ * one screen, and on Contact it puts a SECOND form directly under the first,
+ * which is worse than redundant: it asks somebody who has just filled one in
+ * whether they would like to fill one in. These routes keep the slim bottom
+ * bar and nothing else.
+ */
+const NO_INVITATION = new Set(['/about', '/contact']);
+
+const MAKER = {
+  label: 'Made by team svayam.ai',
+  phone: '8095762180',
+  message:
+    "Hi Svayam, I saw the Kushi Cars website and I'd like a website like that for my business.",
+};
 
 export default function Footer({ settings }: { settings: Settings }) {
   // With no WhatsApp number and no email there is nowhere for a callback
   // request to go, so we show the address rather than a form into a void.
   const canSend = Boolean(dealerNumber(settings) || settings.email);
 
+  // Through waTo, like every other wa.me link on the site — the number is
+  // formatted and the message encoded in one place. Null would mean the
+  // credit renders as plain type rather than as a dead link.
+  const maker = waTo(MAKER.phone, MAKER.message);
+
+  const showInvitation = !NO_INVITATION.has(usePathname());
+
   return (
     <footer id="contact" className="relative scroll-mt-20 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 py-28 lg:px-10 lg:py-36">
+      {showInvitation && (
+      <div className="section-y mx-auto max-w-7xl px-6 lg:px-10">
         <Reveal>
-          <div className="hairline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-ink-800 to-ink-950 p-10 sm:p-14 lg:p-16">
+          <div className="hairline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-paper to-paper-200 p-10 sm:p-14 lg:p-16">
             <div
               aria-hidden
-              className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/20 blur-[110px]"
+              className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/[0.06] blur-[110px]"
             />
             <div className="noise pointer-events-none absolute inset-0" />
 
@@ -37,9 +78,9 @@ export default function Footer({ settings }: { settings: Settings }) {
                 <SplitText
                   as="h2"
                   text="Come and see it in person"
-                  className="mt-6 block font-display text-display-sm font-600 text-white"
+                  className="mt-6 block font-display text-display-sm font-600 text-ink-900"
                 />
-                <p className="mt-6 max-w-md text-pretty leading-relaxed text-slate-300/85">
+                <p className="mt-6 max-w-md text-pretty leading-relaxed text-stone-800/85">
                   Photographs only go so far. Drive it, look underneath it, and
                   bring someone who knows cars. We would rather you were sure.
                 </p>
@@ -95,7 +136,7 @@ export default function Footer({ settings }: { settings: Settings }) {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hairline mt-8 inline-flex items-center gap-2.5 rounded-full bg-white/[0.05] px-6 py-3.5 text-sm font-500 text-white backdrop-blur-md transition-colors duration-300 hover:bg-white/[0.1]"
+                      className="hairline mt-8 inline-flex items-center gap-2.5 rounded-full bg-paper px-6 py-3.5 text-sm font-500 text-ink-900 shadow-card transition-colors duration-300 hover:bg-paper-200"
                     >
                       <Navigation className="h-4 w-4 text-accent" strokeWidth={1.5} />
                       Get directions
@@ -108,17 +149,17 @@ export default function Footer({ settings }: { settings: Settings }) {
               {canSend ? (
                 <CallbackForm settings={settings} />
               ) : (
-                <div className="hairline flex flex-col justify-center gap-4 rounded-2xl bg-white/[0.03] p-8 text-center">
-                  <p className="font-display text-2xl font-600 text-white">
+                <div className="hairline flex flex-col justify-center gap-4 rounded-2xl bg-paper p-8 text-center">
+                  <p className="font-display text-2xl font-600 text-ink-900">
                     Drop in and see us
                   </p>
-                  <p className="text-pretty text-sm leading-relaxed text-slate-400">
+                  <p className="text-pretty text-sm leading-relaxed text-stone-700">
                     We are in Nagarbhavi, just off the Outer Ring Road by the
                     BDA Complex. No appointment needed — come and look at
                     whatever catches your eye.
                   </p>
                   {settings.hours && (
-                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-300">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-800">
                       {settings.hours}
                     </p>
                   )}
@@ -128,26 +169,27 @@ export default function Footer({ settings }: { settings: Settings }) {
           </div>
         </Reveal>
       </div>
+      )}
 
       {/* Bottom bar */}
-      <div className="border-t border-white/[0.06]">
+      <div className="border-t border-line-soft">
         <div className="mx-auto max-w-7xl px-6 py-9 lg:px-10">
-          <div className="flex flex-col items-center justify-between gap-5 text-sm text-slate-500 sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-5 text-sm text-stone-600 sm:flex-row">
             <Link href="/">
               <Wordmark name={settings.businessName} size="sm" />
             </Link>
 
             <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              <Link href="/cars" className="transition-colors hover:text-white">
+              <Link href="/cars" className="transition-colors hover:text-ink-900">
                 Buy a car
               </Link>
-              <Link href="/sell" className="transition-colors hover:text-white">
+              <Link href="/sell" className="transition-colors hover:text-ink-900">
                 Sell your car
               </Link>
-              <Link href="/about" className="transition-colors hover:text-white">
+              <Link href="/about" className="transition-colors hover:text-ink-900">
                 About
               </Link>
-              <Link href="/contact" className="transition-colors hover:text-white">
+              <Link href="/contact" className="transition-colors hover:text-ink-900">
                 Contact
               </Link>
             </nav>
@@ -157,14 +199,27 @@ export default function Footer({ settings }: { settings: Settings }) {
             </p>
           </div>
 
-          {/* Required while the demo ships Wikimedia photography — see
-              public/cars/ATTRIBUTION.md. Delete once Kushi Cars' own
-              photographs replace them. */}
-          <p className="mt-6 border-t border-white/[0.04] pt-6 text-center text-[11px] leading-relaxed text-slate-600">
-            Vehicle photographs are placeholders sourced from Wikimedia Commons
-            and used under CC BY / CC BY-SA licences. They are illustrative and
-            do not depict the specific vehicles listed.
-          </p>
+          {/* The maker's line. Deliberately the quietest thing on the page:
+              it sits below the rule, in the muted tier, and only takes the
+              brand green under the cursor. A builder's credit that competes
+              with the showroom's own phone number is an advert on somebody
+              else's shopfront. */}
+          <div className="mt-6 border-t border-line-soft pt-6 text-center">
+            {maker ? (
+              <a
+                href={maker}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 text-[11px] text-muted transition-colors duration-300 hover:text-accent"
+                aria-label={`${MAKER.label} — message us on WhatsApp`}
+              >
+                <WhatsAppMark className="h-3.5 w-3.5 transition-transform duration-300 ease-premium group-hover:scale-110" />
+                {MAKER.label}
+              </a>
+            ) : (
+              <p className="text-[11px] text-muted">{MAKER.label}</p>
+            )}
+          </div>
         </div>
       </div>
     </footer>
@@ -189,7 +244,7 @@ function ContactRow({
     </>
   );
   const cls =
-    'flex items-start gap-3.5 rounded-lg py-2.5 text-sm text-slate-300 transition-colors';
+    'flex items-start gap-3.5 rounded-lg py-2.5 text-sm text-stone-800 transition-colors';
 
   if (!href) return <p className={cls}>{inner}</p>;
 
@@ -197,7 +252,7 @@ function ContactRow({
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className={`${cls} hover:text-white`}
+      className={`${cls} hover:text-ink-900`}
     >
       {inner}
     </a>

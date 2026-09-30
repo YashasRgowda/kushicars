@@ -38,11 +38,11 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
   return (
     <section
       id="finance"
-      className="relative scroll-mt-20 overflow-hidden py-28 lg:py-36"
+      className="section-y relative scroll-mt-20 overflow-hidden"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/3 top-1/4 h-[500px] w-[500px] rounded-full bg-accent/[0.08] blur-[140px]"
+        className="pointer-events-none absolute left-1/3 top-1/4 h-[500px] w-[500px] rounded-full bg-accent/[0.04] blur-[140px]"
       />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
@@ -53,10 +53,10 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
             <SplitText
               as="h2"
               text="Work out the EMI first"
-              className="mt-6 block max-w-xl font-display text-display-sm font-600 text-white"
+              className="mt-6 block max-w-xl font-display text-display-sm font-600 text-ink-900"
             />
             <Reveal delay={0.12}>
-              <p className="mt-6 max-w-md text-pretty leading-relaxed text-slate-300/85">
+              <p className="mt-6 max-w-md text-pretty leading-relaxed text-stone-800/85">
                 Before you fall for the car, see what it costs each month.
                 Move the sliders for an indicative figure — we work with leading
                 banks and NBFCs and can usually arrange a sanction the same day.
@@ -75,9 +75,9 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
 
               {/* What you actually repay, split */}
               <div className="mt-6">
-                <div className="flex h-2.5 overflow-hidden rounded-full bg-white/[0.07]">
+                <div className="flex h-2.5 overflow-hidden rounded-full bg-paper-200">
                   <div
-                    className="bg-platinum transition-[width] duration-500 ease-premium"
+                    className="bg-ink-800 transition-[width] duration-500 ease-premium"
                     style={{ width: `${100 - interestShare}%` }}
                   />
                   <div
@@ -85,9 +85,9 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
                     style={{ width: `${interestShare}%` }}
                   />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-stone-600">
                   <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-platinum" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-ink-800" />
                     Principal
                   </span>
                   <span className="flex items-center gap-2">
@@ -101,9 +101,9 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
 
           {/* Calculator */}
           <Reveal delay={0.1}>
-            <div className="hairline relative rounded-3xl bg-gradient-to-br from-ink-800 to-ink-900 p-7 shadow-lift sm:p-9">
+            <div className="hairline relative rounded-3xl bg-gradient-to-br from-paper to-paper-200 p-7 shadow-lift sm:p-9">
               <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
-                <span className="flex items-center gap-2 text-sm text-slate-300">
+                <span className="flex items-center gap-2 text-sm text-stone-800">
                   <Calculator className="h-4 w-4 text-accent" strokeWidth={1.5} />
                   Payment estimator
                 </span>
@@ -116,7 +116,7 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
                     onChange={(e) =>
                       e.target.value && setPrice(Number(e.target.value))
                     }
-                    className="cursor-pointer appearance-none rounded-full border border-white/10 bg-ink-950 py-2 pl-4 pr-9 text-xs text-white outline-none transition-colors hover:border-white/25"
+                    className="cursor-pointer appearance-none rounded-full border border-line bg-paper py-2 pl-4 pr-9 text-xs text-ink-900 outline-none transition-colors hover:border-line-strong"
                     defaultValue=""
                   >
                     <option value="">Choose a model…</option>
@@ -128,24 +128,24 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
                   </select>
                   <ChevronDown
                     aria-hidden
-                    className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                    className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-stone-700"
                   />
                 </div>
               </div>
 
-              <div className="hairline relative rounded-2xl bg-ink-1000/70 p-7 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+              <div className="hairline relative rounded-2xl bg-paper p-7 text-center shadow-card">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-600">
                   Your estimated EMI
                 </p>
-                <p className="mt-3 font-display text-5xl font-700 tabular-nums text-white">
+                <p className="mt-3 font-display text-5xl font-700 tabular-nums text-ink-900">
                   <span className="chrome-text">
                     {formatPrice(Math.round(monthly))}
                   </span>
-                  <span className="ml-1 font-sans text-lg font-400 text-slate-500">
+                  <span className="ml-1 font-sans text-lg font-400 text-stone-600">
                     /mo
                   </span>
                 </p>
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-stone-600">
                   {term} months · {formatPrice(down)} down
                 </p>
               </div>
@@ -195,7 +195,7 @@ export default function FinanceCalculator({ cars }: { cars: Car[] }) {
               >
                 Check what you qualify for
               </Link>
-              <p className="mt-3 text-center text-xs text-slate-500">
+              <p className="mt-3 text-center text-xs text-stone-600">
                 Indicative only. Not a finance offer.
               </p>
             </div>
@@ -216,13 +216,13 @@ function Figure({
   accent?: boolean;
 }) {
   return (
-    <div className="hairline rounded-2xl bg-white/[0.03] p-5">
-      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+    <div className="hairline rounded-2xl bg-paper p-5">
+      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600">
         {label}
       </p>
       <p
         className={`mt-2 font-display text-2xl font-600 tabular-nums ${
-          accent ? 'text-accent-glow' : 'text-white'
+          accent ? 'text-accent-ink' : 'text-ink-900'
         }`}
       >
         {value}
@@ -252,8 +252,8 @@ function Slider({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <label className="text-sm text-slate-300">{label}</label>
-        <span className="text-sm font-500 tabular-nums text-white">{value}</span>
+        <label className="text-sm text-stone-800">{label}</label>
+        <span className="text-sm font-500 tabular-nums text-ink-900">{value}</span>
       </div>
       <input
         type="range"
@@ -265,7 +265,9 @@ function Slider({
         aria-label={label}
         className="range-premium w-full"
         style={{
-          background: `linear-gradient(to right, #DC2626 ${pct}%, rgba(255,255,255,0.1) ${pct}%)`,
+          // The unfilled half was a 10% white lift against black; on paper
+          // it has to be a solid grey, or the track reads as full to the end.
+          background: `linear-gradient(to right, #15523a ${pct}%, #e6dcc4 ${pct}%)`,
         }}
       />
     </div>

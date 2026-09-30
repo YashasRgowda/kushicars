@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Star } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { BUSINESS } from '@/lib/business';
 import { TESTIMONIALS } from '@/lib/testimonials';
 import { EASE, Eyebrow, Reveal, SplitText } from './ui/motion';
@@ -17,11 +17,11 @@ const DWELL = 7000;
  * real name — see the provenance note in lib/testimonials.ts.
  *
  * Deliberately spare. An earlier version carried a counter, a progress bar,
- * two arrows, a rail of eight names and a row of theme chips, and the
- * furniture ended up louder than the quote it surrounded. All of that
- * collapses into one row of marks: the active one is wider and fills as the
- * review holds, so it is the position, the progress and the navigation at
- * once. What is left on screen is a sentence, a name, and five stars.
+ * a rail of eight names and a row of theme chips, and the furniture ended up
+ * louder than the quote it surrounded. What is left is a sentence, a name,
+ * five stars, and the two controls people actually reach for: a dot per
+ * review saying where you are, and a pair of arrows for stepping through
+ * them by hand.
  */
 export default function Testimonials() {
   const reduce = useReducedMotion();
@@ -50,7 +50,7 @@ export default function Testimonials() {
       id="reviews"
       aria-roledescription="carousel"
       aria-label="Customer reviews"
-      className="relative scroll-mt-20 overflow-hidden py-28 lg:py-36"
+      className="section-y relative scroll-mt-20 overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -58,7 +58,7 @@ export default function Testimonials() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute right-[10%] top-1/2 h-[380px] w-[380px] -translate-y-1/2 rounded-full bg-accent/[0.06] blur-[150px]"
+        className="pointer-events-none absolute right-[10%] top-1/2 h-[380px] w-[380px] -translate-y-1/2 rounded-full bg-accent/[0.03] blur-[150px]"
       />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
@@ -68,7 +68,7 @@ export default function Testimonials() {
             <SplitText
               as="h2"
               text="What people say afterwards"
-              className="mt-6 block max-w-2xl font-display text-display-sm font-600 text-white"
+              className="mt-6 block max-w-2xl font-display text-display-sm font-600 text-ink-900"
             />
           </div>
           <Reveal delay={0.1}>
@@ -83,9 +83,18 @@ export default function Testimonials() {
           <AnimatePresence mode="wait" custom={direction}>
             <motion.figure
               key={index}
-              initial={{ opacity: 0, y: reduce ? 0 : 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: reduce ? 0 : -14 }}
+              custom={direction}
+              /* Forward, a review rises from below and the old one leaves
+                 upward. Back, both reverse — so the arrows feel like they
+                 are moving a reel rather than reshuffling it. */
+              variants={{
+                enter: (d: number) => ({ opacity: 0, y: reduce ? 0 : d < 0 ? -16 : 16 }),
+                center: { opacity: 1, y: 0 },
+                exit: (d: number) => ({ opacity: 0, y: reduce ? 0 : d < 0 ? 16 : -16 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
               transition={{ duration: 0.45, ease: EASE }}
             >
               <blockquote className="max-w-3xl">
@@ -100,55 +109,78 @@ export default function Testimonials() {
                   {Array.from({ length: current.rating }).map((_, i) => (
                     <Star
                       key={i}
-                      className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
+                      className="h-3.5 w-3.5 fill-gold text-gold"
                     />
                   ))}
                 </span>
-                <span className="text-[15px] text-slate-300">{current.name}</span>
+                <span className="text-[15px] text-stone-800">{current.name}</span>
               </figcaption>
             </motion.figure>
           </AnimatePresence>
         </motion.div>
 
-        {/* Position, progress and navigation, in one row of marks. Two
-            pixels rather than one: a hairline of white/12 on ground this
-            dark is invisible, and a control nobody can see is not minimal,
-            it is missing. */}
-        <div className="mt-10 flex gap-2">
-          {TESTIMONIALS.map((t, i) => (
-            <button
-              key={t.name}
-              type="button"
-              onClick={() => go(i, i > index ? 1 : -1)}
-              aria-label={`Review ${i + 1} of ${count}, by ${t.name}`}
-              aria-current={i === index}
-              className="group py-3"
-            >
-              <span
-                className={`relative block h-0.5 overflow-hidden rounded-full transition-all duration-500 ease-premium ${
-                  i === index
-                    ? 'w-12 bg-white/20'
-                    : 'w-6 bg-white/20 group-hover:bg-white/50'
-                }`}
+        {/* Where you are, and a way to move by hand.
+
+            The dots replaced a row of dashes that gave no hover response at
+            all — the cursor landed on a control and nothing happened, which
+            reads as broken rather than as restraint. Each dot now grows and
+            takes the brand green under the cursor, and the hit area is a
+            32px square around a 8px dot, so it is reachable on a phone
+            without the dot itself having to be large.
+
+            The arrows exist because the one thing people do here is go BACK:
+            a review holds for seven seconds and moves on while they are
+            still reading it. */}
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+          <div className="-mx-1.5 flex items-center">
+            {TESTIMONIALS.map((t, i) => (
+              <button
+                key={t.name}
+                type="button"
+                onClick={() => go(i, i > index ? 1 : -1)}
+                aria-label={`Review ${i + 1} of ${count}, by ${t.name}`}
+                aria-current={i === index ? 'true' : undefined}
+                className="group grid h-8 w-8 place-items-center"
               >
-                {i === index && (
-                  <motion.span
-                    key={`${index}-${paused}`}
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: paused || reduce ? 0 : 1 }}
-                    transition={{
-                      duration: paused || reduce ? 0 : DWELL / 1000,
-                      ease: 'linear',
-                    }}
-                    className="absolute inset-0 origin-left bg-accent"
-                  />
-                )}
-              </span>
-            </button>
-          ))}
+                <span
+                  className={`block rounded-full transition-all duration-300 ease-premium ${
+                    i === index
+                      ? 'h-2.5 w-2.5 bg-accent'
+                      : 'h-2 w-2 bg-line-strong group-hover:scale-125 group-hover:bg-accent-glow'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <NavArrow side="prev" onClick={() => go(index - 1, -1)} />
+            <NavArrow side="next" onClick={() => go(index + 1, 1)} />
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/** One step back or forward. The same shape the FAQ and the gallery use. */
+function NavArrow({ side, onClick }: { side: 'prev' | 'next'; onClick: () => void }) {
+  const Icon = side === 'prev' ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={side === 'prev' ? 'Previous review' : 'Next review'}
+      className="group grid h-11 w-11 place-items-center rounded-full border border-line text-stone-700 transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-white"
+    >
+      <Icon
+        aria-hidden
+        className={`h-4 w-4 transition-transform duration-300 ease-premium ${
+          side === 'prev' ? 'group-hover:-translate-x-0.5' : 'group-hover:translate-x-0.5'
+        }`}
+        strokeWidth={1.8}
+      />
+    </button>
   );
 }
 
@@ -161,7 +193,7 @@ export default function Testimonials() {
  */
 function Words({ text, reduce }: { text: string; reduce: boolean }) {
   const cls =
-    'block text-pretty font-display text-[1.6rem] font-400 leading-[1.35] text-white sm:text-3xl lg:text-[2rem]';
+    'block text-pretty font-display text-[1.6rem] font-400 leading-[1.35] text-ink-900 sm:text-3xl lg:text-[2rem]';
 
   if (reduce) return <span className={cls}>{text}</span>;
 
@@ -201,14 +233,14 @@ function RatingBadge() {
       href={BUSINESS.googleReviewsUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 text-slate-400 transition-colors duration-300 hover:text-white"
+      className="group flex items-center gap-4 text-stone-700 transition-colors duration-300 hover:text-ink-900"
     >
       <span className="flex gap-0.5" aria-hidden>
         {Array.from({ length: 5 }).map((_, i) => (
-          <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+          <Star key={i} className="h-3.5 w-3.5 fill-gold text-gold" />
         ))}
       </span>
-      <span className="font-display text-xl font-600 tabular-nums text-white">
+      <span className="font-display text-xl font-600 tabular-nums text-ink-900">
         {BUSINESS.rating.toFixed(1)}
       </span>
       <span className="text-[13px]">

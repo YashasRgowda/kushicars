@@ -27,7 +27,25 @@ export const metadata: Metadata = {
     'used car finance Bengaluru',
     'Kushi Cars',
   ],
-  icons: { icon: '/favicon.svg' },
+  // The car is a 3.7:1 profile, so it fights a square. Below about 48px the
+  // gold trim disappears and only mass survives — those sizes get a flat
+  // cream silhouette of the same car, and the full artwork takes over once
+  // there is room for it.
+  //
+  // app/favicon.ico used to sit alongside this — the Next.js starter
+  // triangle, committed on day one. The app-router icon convention OUTRANKS
+  // public/, so it was quietly winning over everything declared here. It is
+  // deleted; public/favicon.ico is now the only .ico and is listed below.
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/brand/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   openGraph: {
     title,
     description,
@@ -46,8 +64,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#08090c',
-  colorScheme: 'dark',
+  // Matches the page ground, so a phone's address bar and the iOS status
+  // area blend into the top of the site instead of capping it with a bar.
+  themeColor: '#f8f5ec',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({

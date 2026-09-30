@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
 import { createCar } from '@/app/admin/cars/actions';
 import CarForm from '@/components/admin/CarForm';
+import { PageTitle } from '@/components/admin/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,19 +14,22 @@ export default async function NewCarPage() {
     <>
       <Link
         href="/admin"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-white"
+        className="group mb-10 inline-flex items-center gap-2 text-[13px] text-stone-600 transition-colors duration-300 hover:text-ink-900"
       >
-        <ArrowLeft className="h-4 w-4" /> All cars
+        <ArrowLeft
+          className="h-3.5 w-3.5 transition-transform duration-300 ease-premium group-hover:-translate-x-0.5"
+          strokeWidth={1.8}
+        />
+        All cars
       </Link>
 
-      <h1 className="mt-4 font-display text-3xl font-600 text-white">
-        Add a car
-      </h1>
-      <p className="mt-1 text-sm text-slate-400">
-        It appears on the website as soon as you save.
-      </p>
+      <PageTitle
+        eyebrow="New listing"
+        title="Add a car"
+        sub="It goes live on the website the moment you save. Only the starred fields are needed — the rest can wait."
+      />
 
-      <CarForm action={createCar} submitLabel="Add car" />
+      <CarForm action={createCar} submitLabel="Add this car" />
     </>
   );
 }

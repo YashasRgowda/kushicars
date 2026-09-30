@@ -2,6 +2,7 @@ import { getSettings } from '@/lib/cars';
 import { siteUrl } from '@/lib/site';
 import { LocalBusinessJsonLd } from '@/components/seo/JsonLd';
 import Navbar from '@/components/Navbar';
+import PageTransition from '@/components/PageTransition';
 import Footer from '@/components/Footer';
 import WhatsAppDock from '@/components/WhatsAppDock';
 import ScrollProgress from '@/components/ScrollProgress';
@@ -23,13 +24,15 @@ export default async function SiteLayout({
   const settings = await getSettings();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-ink-950">
+    <div className="flex min-h-dvh flex-col bg-paper-100">
       {/* One AutoDealer block for the whole public site — the knowledge-panel
           entry for a business whose customers all arrive via local search. */}
       <LocalBusinessJsonLd settings={settings} siteUrl={siteUrl} />
       <ScrollProgress />
       <Navbar settings={settings} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <Footer settings={settings} />
       <WhatsAppDock settings={settings} />
     </div>

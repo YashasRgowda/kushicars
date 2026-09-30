@@ -167,12 +167,12 @@ export default function SellWizard() {
           Step {step} of {SELL_STEPS.length}: {SELL_STEPS[step - 1].title}
         </p>
 
-        <div className="hairline rounded-3xl bg-ink-900/50 p-7 backdrop-blur-sm sm:p-10 lg:p-12">
+        <div className="hairline rounded-3xl bg-paper p-7 shadow-card sm:p-10 lg:p-12">
           <header className="mb-10">
-            <h2 className="font-display text-2xl font-600 text-white sm:text-3xl">
+            <h2 className="font-display text-2xl font-600 text-ink-900 sm:text-3xl">
               {SELL_STEPS[step - 1].title}
             </h2>
-            <p className="mt-2 text-[15px] text-slate-400">
+            <p className="mt-2 text-[15px] text-stone-700">
               {SELL_STEPS[step - 1].blurb}
             </p>
           </header>
@@ -195,23 +195,23 @@ export default function SellWizard() {
           {state.error && (
             <p
               role="alert"
-              className="mt-8 rounded-xl border border-accent/30 bg-accent/[0.07] px-5 py-4 text-[14px] text-accent-soft"
+              className="mt-8 rounded-xl border border-danger-line bg-danger-wash px-5 py-4 text-[14px] text-danger-ink"
             >
               {state.error}
               {state.fieldErrors && (
-                <span className="mt-1.5 block text-slate-400">
+                <span className="mt-1.5 block text-stone-700">
                   {Object.values(state.fieldErrors).filter(Boolean).join(' ')}
                 </span>
               )}
             </p>
           )}
 
-          <div className="mt-12 flex items-center justify-between gap-4 border-t border-white/[0.08] pt-8">
+          <div className="mt-12 flex items-center justify-between gap-4 border-t border-line-soft pt-8">
             <button
               type="button"
               onClick={back}
               disabled={step === 1}
-              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm text-slate-400 transition-colors duration-300 hover:text-white disabled:pointer-events-none disabled:opacity-0"
+              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm text-stone-700 transition-colors duration-300 hover:text-ink-900 disabled:pointer-events-none disabled:opacity-0"
             >
               <ArrowLeft className="h-4 w-4" strokeWidth={1.8} />
               Back
@@ -239,7 +239,7 @@ export default function SellWizard() {
               <button
                 type="button"
                 onClick={next}
-                className="flex items-center gap-2.5 rounded-full bg-platinum px-8 py-4 text-sm font-500 text-ink-950 shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.03]"
+                className="flex items-center gap-2.5 rounded-full bg-accent px-8 py-4 text-sm font-500 text-white shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.03]"
               >
                 Continue
                 <ArrowRight className="h-4 w-4" strokeWidth={1.8} />
@@ -249,7 +249,7 @@ export default function SellWizard() {
         </div>
       </form>
 
-      <p className="mt-6 text-center text-[13px] text-slate-500">
+      <p className="mt-6 text-center text-[13px] text-stone-600">
         Nothing is shared with anyone else, and there is no obligation to sell.
       </p>
     </div>

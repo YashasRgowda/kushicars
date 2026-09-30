@@ -1,8 +1,9 @@
 'use client';
 
 import { useActionState } from 'react';
-import { Lock, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { signIn, type AuthState } from '@/app/admin/actions';
+import { TextField } from '@/components/form/fields';
 
 export default function LoginForm({ next = '/admin' }: { next?: string }) {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
@@ -11,48 +12,31 @@ export default function LoginForm({ next = '/admin' }: { next?: string }) {
   );
 
   return (
-    <form action={formAction} className="mt-8 space-y-4">
+    <form action={formAction} className="mt-10 space-y-5">
       <input type="hidden" name="next" value={next} />
 
-      <div>
-        <label
-          htmlFor="email"
-          className="mb-1.5 block text-xs uppercase tracking-wider text-slate-400"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="username"
-          required
-          className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors placeholder:text-slate-600 focus:border-accent/60 focus-visible:ring-2 focus-visible:ring-accent/40"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="password"
-          className="mb-1.5 block text-xs uppercase tracking-wider text-slate-400"
-        >
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-accent/60 focus-visible:ring-2 focus-visible:ring-accent/40"
-        />
-      </div>
+      <TextField
+        label="Email"
+        name="email"
+        type="email"
+        autoComplete="username"
+        required
+        placeholder="you@kushicars.in"
+      />
+      <TextField
+        label="Password"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        required
+      />
 
       {state.error && (
         <p
           role="alert"
-          className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent-glow"
+          className="flex items-start gap-2.5 rounded-xl border border-danger-line bg-danger-wash px-4 py-3 text-[13px] leading-relaxed text-danger-ink"
         >
+          <AlertCircle className="mt-px h-4 w-4 shrink-0" strokeWidth={1.8} />
           {state.error}
         </p>
       )}
@@ -60,15 +44,20 @@ export default function LoginForm({ next = '/admin' }: { next?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3.5 text-sm font-500 text-white shadow-glow transition-transform disabled:opacity-60 disabled:shadow-none enabled:hover:scale-[1.02]"
+        className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-accent py-4 text-sm font-500 text-white shadow-lift-accent transition-transform duration-300 ease-premium disabled:cursor-wait disabled:opacity-60 disabled:shadow-none enabled:hover:scale-[1.02]"
       >
         {pending ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Signing in…
+            <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+            Signing in…
           </>
         ) : (
           <>
-            <Lock className="h-4 w-4" /> Sign in
+            Sign in
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-300 ease-premium group-hover:translate-x-1"
+              strokeWidth={1.8}
+            />
           </>
         )}
       </button>

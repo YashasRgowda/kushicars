@@ -36,16 +36,16 @@ export default function EnquiryPanel({
   const wa = waLink(settings, messages.car(settings.businessName, label, formatPrice(car.price)));
 
   return (
-    <div className="hairline rounded-2xl bg-ink-850/60 p-7 backdrop-blur-sm">
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+    <div className="hairline rounded-2xl bg-paper p-7 shadow-card">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
         Asking price
       </p>
-      <p className="mt-2 font-display text-4xl font-600 tabular-nums leading-none text-white">
+      <p className="mt-2 font-display text-4xl font-600 tabular-nums leading-none text-ink-900">
         {formatPrice(car.price)}
       </p>
-      <p className="mt-3 text-[13px] text-slate-400">
+      <p className="mt-3 text-[13px] text-stone-700">
         Roughly{' '}
-        <span className="tabular-nums text-white">
+        <span className="tabular-nums text-ink-900">
           ₹{formatNumber(monthlyFrom(car.price))}
         </span>{' '}
         a month on a five-year loan at 12.5%, with 20% down.
@@ -71,7 +71,7 @@ export default function EnquiryPanel({
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="w-full rounded-full border border-white/12 px-6 py-4 text-sm text-slate-200 transition-colors duration-300 hover:border-white/30 hover:text-white"
+          className="w-full rounded-full border border-line px-6 py-4 text-sm text-stone-800 transition-colors duration-300 hover:border-line-strong hover:text-ink-900"
         >
           {open ? 'Hide the form' : 'Book a test drive'}
         </button>
@@ -79,7 +79,7 @@ export default function EnquiryPanel({
         {settings.phone && (
           <a
             href={telHref(settings.phone)}
-            className="flex w-full items-center justify-center gap-2.5 py-2 text-sm text-slate-400 transition-colors hover:text-white"
+            className="flex w-full items-center justify-center gap-2.5 py-2 text-sm text-stone-700 transition-colors hover:text-ink-900"
           >
             <Phone className="h-4 w-4" strokeWidth={1.5} />
             <span className="tabular-nums">{settings.phone}</span>
@@ -96,7 +96,7 @@ export default function EnquiryPanel({
             transition={{ duration: 0.4, ease: EASE }}
             className="overflow-hidden"
           >
-            <div className="mt-7 border-t border-white/[0.08] pt-7">
+            <div className="mt-7 border-t border-line-soft pt-7">
               {state.ok ? (
                 <Done reference={state.ref} />
               ) : (
@@ -133,17 +133,17 @@ export default function EnquiryPanel({
                   />
 
                   {state.error && (
-                    <p className="text-[13px] text-accent-soft">{state.error}</p>
+                    <p className="text-[13px] text-danger-ink">{state.error}</p>
                   )}
 
                   <button
                     type="submit"
                     disabled={pending}
-                    className="w-full rounded-full bg-platinum px-6 py-3.5 text-sm font-500 text-ink-950 transition-all duration-300 ease-premium hover:scale-[1.02] disabled:cursor-wait disabled:opacity-60"
+                    className="w-full rounded-full bg-accent px-6 py-3.5 text-sm font-500 text-white transition-all duration-300 ease-premium hover:scale-[1.02] disabled:cursor-wait disabled:opacity-60"
                   >
                     {pending ? 'Sending…' : 'Request a test drive'}
                   </button>
-                  <p className="text-[12px] leading-relaxed text-slate-500">
+                  <p className="text-[12px] leading-relaxed text-stone-600">
                     We will call to confirm before you travel. Bring your licence —
                     you can take it onto the Outer Ring Road, not just around the block.
                   </p>
@@ -165,16 +165,16 @@ function Done({ reference }: { reference?: string }) {
       transition={{ duration: 0.5, ease: EASE }}
       className="text-center"
     >
-      <CheckCircle2 className="mx-auto h-9 w-9 text-emerald-400" strokeWidth={1.5} />
-      <p className="mt-4 font-display text-xl font-600 text-white">
+      <CheckCircle2 className="mx-auto h-9 w-9 text-accent-soft" strokeWidth={1.5} />
+      <p className="mt-4 font-display text-xl font-600 text-ink-900">
         We have your request
       </p>
-      <p className="mt-2 text-[13px] leading-relaxed text-slate-400">
+      <p className="mt-2 text-[13px] leading-relaxed text-stone-700">
         Someone will call you to fix a time. If it is urgent, WhatsApp us — that
         is the fastest way to reach the showroom.
       </p>
       {reference && (
-        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-600">
+        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
           Ref {reference}
         </p>
       )}

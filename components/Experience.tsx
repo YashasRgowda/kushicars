@@ -10,6 +10,12 @@ import { EASE, Eyebrow, Reveal, SplitText } from './ui/motion';
  * Four promises, told as a narrative rather than a card grid — a sticky
  * column of type on the left, the steps moving past it on the right.
  *
+ * The left column states what it is and gets out of the way. It used to
+ * argue the case in a paragraph — "the car is the easy bit" — which is true
+ * but needs reading, and nobody reads a sticky column while four numbered
+ * blocks are travelling past it. A heading that names the thing, one line
+ * saying it is all included, and the answer itself on the right.
+ *
  * The copy is deliberately specific to how a car actually changes hands in
  * Karnataka. Generic luxury language ("white-glove", "concierge") is what
  * made this read as a template.
@@ -52,40 +58,39 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      className="relative scroll-mt-20 overflow-hidden border-y border-white/[0.06] bg-ink-900/60 py-28 lg:py-36"
+      className="section-y relative scroll-mt-20 overflow-hidden border-y border-line bg-paper-200"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-40 top-1/3 h-[520px] w-[520px] rounded-full bg-accent/[0.07] blur-[130px]"
+        className="pointer-events-none absolute -left-40 top-1/3 h-[520px] w-[520px] rounded-full bg-accent/[0.035] blur-[130px]"
       />
 
       <div className="relative mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-24 lg:px-10">
         {/* Left — holds its position while the steps travel past */}
         <div className="lg:sticky lg:top-32 lg:self-start">
-          <Eyebrow>The Kushi Cars Experience</Eyebrow>
+          <Eyebrow>Buying from Kushi Cars</Eyebrow>
           <SplitText
             as="h2"
-            text="Buying used, without the used-car part"
-            className="mt-6 block font-display text-display-sm font-600 text-white"
+            text="What you get with every car"
+            className="mt-6 block font-display text-display-sm font-600 text-ink-900"
           />
           <Reveal delay={0.15}>
-            <p className="mt-6 max-w-md text-pretty leading-relaxed text-slate-300/85">
-              The car is the easy bit. What actually goes wrong is the
-              paperwork, the finance and the silence after the sale. So that is
-              the part we built the business around.
+            <p className="mt-6 max-w-md text-pretty leading-relaxed text-stone-800/85">
+              Four things, and all four are already in the price. Nothing extra
+              to pay, and nothing you have to chase us for.
             </p>
           </Reveal>
 
           <Reveal delay={0.25}>
             <Link
               href="/contact"
-              className="group mt-9 inline-flex items-center gap-3 text-sm font-500 text-white"
+              className="group mt-9 inline-flex items-center gap-3 text-sm font-500 text-ink-900"
             >
               <span className="relative">
                 Talk to us before you buy anywhere
                 <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-500 ease-premium group-hover:scale-x-100" />
               </span>
-              <span className="grid h-8 w-8 place-items-center rounded-full border border-white/15 transition-colors duration-300 group-hover:border-accent group-hover:bg-accent">
+              <span className="grid h-8 w-8 place-items-center rounded-full border border-line transition-colors duration-300 group-hover:border-accent group-hover:bg-accent">
                 →
               </span>
             </Link>
@@ -97,7 +102,7 @@ export default function Experience() {
           {/* Rail that fills as you read down it */}
           <div
             aria-hidden
-            className="absolute left-0 top-0 hidden h-full w-px bg-white/[0.08] sm:block"
+            className="absolute left-0 top-0 hidden h-full w-px bg-line sm:block"
           >
             <motion.div
               style={{ scaleY: railScale }}
@@ -113,12 +118,12 @@ export default function Experience() {
                 whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 viewport={{ once: true, margin: '-15%' }}
                 transition={{ duration: 0.9, ease: EASE }}
-                className="group relative border-b border-white/[0.08] py-9 first:pt-0 last:border-b-0 last:pb-0"
+                className="group relative border-b border-line-soft py-9 first:pt-0 last:border-b-0 last:pb-0"
               >
                 {/* Node on the rail */}
                 <span
                   aria-hidden
-                  className="absolute -left-12 top-11 hidden h-2 w-2 -translate-x-[3.5px] rounded-full bg-ink-600 ring-4 ring-ink-900 transition-colors duration-500 group-hover:bg-accent sm:block"
+                  className="absolute -left-12 top-11 hidden h-2 w-2 -translate-x-[3.5px] rounded-full bg-line-strong ring-4 ring-paper-200 transition-colors duration-500 group-hover:bg-accent sm:block"
                 />
 
                 <div className="flex items-start gap-5">
@@ -128,17 +133,17 @@ export default function Experience() {
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                      <h3 className="font-display text-2xl font-600 text-white">
+                      <h3 className="font-display text-2xl font-600 text-ink-900">
                         {s.title}
                       </h3>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                     </div>
-                    <p className="mt-3 text-pretty leading-relaxed text-slate-400">
+                    <p className="mt-3 text-pretty leading-relaxed text-stone-700">
                       {s.body}
                     </p>
-                    <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/[0.05] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-300">
+                    <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-paper-200 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stone-800">
                       <span className="h-1 w-1 rounded-full bg-accent" />
                       {s.meta}
                     </p>

@@ -1,6 +1,21 @@
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
-import { Eyebrow, Reveal, SplitText } from './ui/motion';
+'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
+import { EASE, Eyebrow, Reveal, SplitText } from './ui/motion';
+
+/* The masthead opens as a sequence, not all at once. Each piece waits for
+   the one above it, which is the whole difference between a page that
+   arrives and a page that is simply present when you get there. The gaps
+   are deliberately uneven — the headline gets the longest pause before it,
+   because it is the thing worth waiting for.
+
+   A "Home > Cars" breadcrumb used to open the sequence. It went: this site
+   is four pages deep at most, every one of them is one tap away in the
+   navbar, and a trail that only ever reads "Home >" is furniture telling
+   you something you already know. The BreadcrumbList structured data stays
+   — that is what puts the trail under the result in Google, and it costs
+   the page nothing to look at. */
+const STEP = { eyebrow: 0.14, title: 0.26, lede: 0.44, extra: 0.56 };
 
 /**
  * The masthead on every interior page.
@@ -14,14 +29,12 @@ export default function PageHeader({
   eyebrow,
   title,
   lede,
-  crumbs,
   children,
   compact = false,
 }: {
   eyebrow: string;
   title: string;
   lede?: string;
-  crumbs?: { label: string; href?: string }[];
   children?: React.ReactNode;
   /**
    * For pages where the header is not the point — a car listing, where the
@@ -29,6 +42,16 @@ export default function PageHeader({
    */
   compact?: boolean;
 }) {
+  const reduce = useReducedMotion();
+  const rise = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, ease: EASE, delay },
+        };
+
   return (
     <header
       className={`relative overflow-hidden ${
@@ -37,45 +60,31 @@ export default function PageHeader({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] max-w-full -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[150px]"
+        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] max-w-full -translate-x-1/2 rounded-full bg-accent/[0.035] blur-[150px]"
       />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        {crumbs && crumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className={compact ? 'mb-5' : 'mb-8'}>
-            <ol className="flex flex-wrap items-center gap-1.5 text-[13px] text-slate-500">
-              {crumbs.map((c, i) => (
-                <li key={c.label} className="flex items-center gap-1.5">
-                  {i > 0 && <ChevronRight aria-hidden className="h-3 w-3 text-slate-700" />}
-                  {c.href ? (
-                    <Link href={c.href} className="transition-colors hover:text-white">
-                      {c.label}
-                    </Link>
-                  ) : (
-                    <span className="text-slate-400">{c.label}</span>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
-
-        <Eyebrow>{eyebrow}</Eyebrow>
+        <Eyebrow delay={STEP.eyebrow}>{eyebrow}</Eyebrow>
         <SplitText
           as="h1"
           text={title}
-          className={`${compact ? 'mt-5' : 'mt-7'} block max-w-4xl font-display text-display-sm font-600 text-white`}
+          delay={STEP.title}
+          className={`${compact ? 'mt-5' : 'mt-7'} block max-w-4xl font-display text-display-sm font-600 text-ink-900`}
         />
         {lede && (
-          <Reveal delay={0.15}>
+          <Reveal delay={STEP.lede}>
             <p
-              className={`${compact ? 'mt-3' : 'mt-7'} max-w-2xl text-pretty text-[17px] leading-relaxed text-slate-400`}
+              className={`${compact ? 'mt-3' : 'mt-7'} max-w-2xl text-pretty text-[17px] leading-relaxed text-stone-700`}
             >
               {lede}
             </p>
           </Reveal>
         )}
-        {children && <div className="mt-10">{children}</div>}
+        {children && (
+          <motion.div {...rise(STEP.extra)} className="mt-10">
+            {children}
+          </motion.div>
+        )}
       </div>
     </header>
   );

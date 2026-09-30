@@ -103,7 +103,7 @@ export default function Showcase({ car }: { car: Car }) {
     <section
       id="showcase"
       ref={ref}
-      className="relative h-[300vh] scroll-mt-20 bg-ink-1000 lg:h-[340vh]"
+      className="relative h-[300vh] scroll-mt-20 bg-paper-200 lg:h-[340vh]"
       aria-label={`Featured vehicle: ${car.brand} ${car.model}`}
     >
       <div className="scene sticky top-0 h-dvh overflow-hidden">
@@ -111,7 +111,7 @@ export default function Showcase({ car }: { car: Car }) {
         <motion.div
           aria-hidden
           style={{ scale: reduce ? 1 : glowScale }}
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.16] blur-[140px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.05] blur-[140px]"
         />
 
         {/* Marque, oversized and behind everything */}
@@ -124,7 +124,13 @@ export default function Showcase({ car }: { car: Car }) {
           }}
           className="pointer-events-none absolute inset-0 flex select-none items-center justify-center"
         >
-          <span className="font-display text-[23vw] font-700 uppercase leading-none tracking-[-0.04em] text-white/[0.05]">
+          {/* A texture, not a heading — it is deliberately at the edge of
+              visible, so it is hidden from screen readers rather than read
+              aloud as a stray word. */}
+          <span
+            aria-hidden
+            className="font-display text-[23vw] font-700 uppercase leading-none tracking-[-0.04em] text-ink-900/[0.05]"
+          >
             {car.brand.split(' ')[0]}
           </span>
         </motion.div>
@@ -140,7 +146,7 @@ export default function Showcase({ car }: { car: Car }) {
           <h2 className="mt-3 font-display text-display-sm font-600">
             <span className="chrome-text">{car.model}</span>
           </h2>
-          <p className="mt-2 text-sm text-slate-400">{car.variant}</p>
+          <p className="mt-2 text-sm text-stone-700">{car.variant}</p>
         </motion.div>
 
         {/* Band 2 — the plate, sized off viewport height so it always fits */}
@@ -159,7 +165,16 @@ export default function Showcase({ car }: { car: Car }) {
             <div // Below lg the plate can use the full width; from lg the callouts
               // flank it, so it is capped to leave them clearance on a narrow
               // desktop window.
-              className="hairline relative h-[36vh] w-[min(88vw,57.6vh)] overflow-hidden rounded-2xl shadow-[0_60px_120px_-30px_rgba(0,0,0,0.95)] lg:w-[min(50vw,57.6vh)]">
+              //
+              // The frame is 16/10 — the same one the cards, the gallery and
+              // the admin list use, and the ratio the photographs actually
+              // are (1600x1000). It used to be a fixed h-[36vh] with the
+              // width clamped to 88vw, which is square-ish on a phone: cover
+              // then filled the height and cut about a third of the car away,
+              // half off each side. Deriving the height from the width costs
+              // the desktop nothing, because 57.6vh / 1.6 is exactly the 36vh
+              // it used to be.
+              className="hairline relative aspect-[16/10] w-[min(88vw,57.6vh)] overflow-hidden rounded-2xl shadow-[0_40px_80px_-28px_rgba(16,24,40,0.28)] lg:w-[min(50vw,57.6vh)]">
               {car.image ? (
                 <img
                   src={car.image}
@@ -167,8 +182,8 @@ export default function Showcase({ car }: { car: Car }) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#181c26_0%,#0b0d12_55%,#11141b_100%)]">
-                  <span className="font-display text-5xl text-white/15">
+                <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#f8f5ec_0%,#e6dcc4_55%,#f1ead8_100%)]">
+                  <span className="font-display text-5xl text-ink-900/15">
                     {car.model}
                   </span>
                 </div>
@@ -181,12 +196,16 @@ export default function Showcase({ car }: { car: Car }) {
             {car.image && (
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-full h-[9vh] overflow-hidden opacity-25 [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.9),transparent_78%)] [-webkit-mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.9),transparent_78%)]"
+                /* Sized as a fraction of the plate rather than in vh, so it
+                   still lines up now that the plate's height follows its
+                   width. 25% of the plate, showing a flipped copy of the
+                   same height — which is what 9vh and 36vh meant before. */
+                className="pointer-events-none absolute inset-x-0 top-full h-[25%] overflow-hidden opacity-25 [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.9),transparent_78%)] [-webkit-mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.9),transparent_78%)]"
               >
                 <img
                   src={car.image}
                   alt=""
-                  className="h-[36vh] w-full -translate-y-[27vh] scale-y-[-1] object-cover blur-[2px]"
+                  className="h-[400%] w-full -translate-y-[75%] scale-y-[-1] object-cover blur-[2px]"
                 />
               </div>
             )}
@@ -194,7 +213,7 @@ export default function Showcase({ car }: { car: Car }) {
             {/* Contact shadow on the floor */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -bottom-8 left-1/2 h-12 w-[76%] -translate-x-1/2 rounded-[50%] bg-black/70 blur-2xl"
+              className="pointer-events-none absolute -bottom-8 left-1/2 h-12 w-[76%] -translate-x-1/2 rounded-[50%] bg-ink-950/25 blur-2xl"
             />
           </motion.div>
         </div>
@@ -214,7 +233,7 @@ export default function Showcase({ car }: { car: Car }) {
           className="absolute inset-x-0 bottom-[7vh] z-20 flex flex-col items-center gap-5 px-6 text-center"
         >
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-slate-500">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-stone-600">
               Asking price
             </p>
             <p className="mt-2 font-display text-5xl font-700 tabular-nums sm:text-6xl">
@@ -235,7 +254,7 @@ export default function Showcase({ car }: { car: Car }) {
         {/* Progress rail */}
         <div
           aria-hidden
-          className="absolute right-8 top-1/2 hidden h-40 w-px -translate-y-1/2 bg-white/10 lg:block"
+          className="absolute right-8 top-1/2 hidden h-40 w-px -translate-y-1/2 bg-line-strong lg:block"
         >
           <motion.div
             style={{ scaleY: railScale }}
@@ -298,7 +317,7 @@ function Callout({
     >
       <motion.span
         style={{ scaleX: disabled ? 1 : lineScale }}
-        className={`h-px w-12 bg-gradient-to-r from-accent/70 to-transparent ${
+        className={`h-px w-12 bg-gradient-to-r from-gold/70 to-transparent ${
           side === 'left' ? 'origin-right' : 'origin-left'
         }`}
       />
@@ -313,11 +332,11 @@ function Callout({
           }`}
         >
           {children}
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-stone-600">
             {label}
           </span>
         </div>
-        <p className="mt-1.5 whitespace-nowrap text-sm font-500 text-white">
+        <p className="mt-1.5 whitespace-nowrap text-sm font-500 text-ink-900">
           {value}
         </p>
       </div>

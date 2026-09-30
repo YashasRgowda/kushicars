@@ -20,7 +20,13 @@ export interface Car {
   registration: string | null; // RTO code
   tag?: Tag;
   sold: boolean;
+  /** Holds the big feature panel on the home page. At most one car does. */
+  showcase: boolean;
   photos: string[];
+  /** Showroom order. Lower numbers come first; the admin form edits it. */
+  sortOrder: number;
+  /** When it went on the floor. The panel counts the days from this. */
+  createdAt: string;
   /** First photo, or undefined — CarCard falls back to a typographic plate. */
   image?: string;
 }

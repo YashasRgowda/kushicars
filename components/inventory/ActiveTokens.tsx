@@ -77,12 +77,12 @@ export default function ActiveTokens({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.25, ease: EASE }}
-            className="group flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] py-1.5 pl-3.5 pr-2.5 text-[13px] text-slate-200 transition-colors duration-200 hover:border-accent/50 hover:text-white"
+            className="group flex items-center gap-2 rounded-full border border-line bg-paper py-1.5 pl-3.5 pr-2.5 text-[13px] text-stone-800 transition-colors duration-200 hover:border-accent hover:text-ink-900"
           >
             {t.label}
             <X
               aria-hidden
-              className="h-3.5 w-3.5 text-slate-500 transition-colors duration-200 group-hover:text-accent"
+              className="h-3.5 w-3.5 text-stone-600 transition-colors duration-200 group-hover:text-accent"
               strokeWidth={2}
             />
             <span className="sr-only">Remove filter</span>
@@ -94,7 +94,7 @@ export default function ActiveTokens({
         <button
           type="button"
           onClick={reset}
-          className="ml-1 text-[13px] text-slate-500 underline-offset-4 transition-colors hover:text-white hover:underline"
+          className="ml-1 text-[13px] text-stone-600 underline-offset-4 transition-colors hover:text-ink-900 hover:underline"
         >
           Clear all
         </button>

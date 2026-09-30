@@ -9,17 +9,24 @@ import { EASE } from '@/components/ui/motion';
    Form primitives.
 
    One set of inputs for the whole site. They are deliberately plain —
-   a dark field, a hairline, a focused accent edge — because a form on a
-   page this rich should recede and let the answers be the loud thing.
+   a white field, a hairline, a focused edge — because a form on a page
+   this rich should recede and let the answers be the loud thing.
+
+   The field is white and the page behind it is not. That is the whole
+   trick on a light theme: a form reads as a stack of things you write ON,
+   sitting on the sheet, rather than as boxes drawn onto it.
    ================================================================== */
 
 const base =
-  'w-full rounded-xl border bg-white/[0.03] px-4 py-3.5 text-[15px] text-white placeholder:text-slate-600 outline-none transition-colors duration-200';
+  'w-full rounded-xl border bg-paper px-4 py-3.5 text-[15px] text-ink-900 placeholder:text-muted outline-none transition-colors duration-200';
 
+// A white field on a near-white page is only as legible as its edge, so the
+// resting border is the STRONG line rather than the default one — the weight
+// that reads as "you write here" against both the page and a white card.
 const ring = (invalid?: boolean) =>
   invalid
-    ? 'border-accent/60 focus:border-accent'
-    : 'border-white/10 hover:border-white/20 focus:border-white/35';
+    ? 'border-danger focus:border-danger'
+    : 'border-line-strong hover:border-stone-400 focus:border-stone-700';
 
 export function ErrorText({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -28,7 +35,7 @@ export function ErrorText({ id, children }: { id: string; children: React.ReactN
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: EASE }}
-      className="mt-2 flex items-start gap-1.5 text-[13px] text-accent-soft"
+      className="mt-2 flex items-start gap-1.5 text-[13px] text-danger-ink"
     >
       <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0" strokeWidth={2} />
       {children}
@@ -48,11 +55,11 @@ export function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-2.5 flex items-baseline justify-between gap-3 text-[13px] font-500 text-slate-300"
+      className="mb-2.5 flex items-baseline justify-between gap-3 text-[13px] font-500 text-stone-800"
     >
       <span>{children}</span>
       {optional && (
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-600">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
           Optional
         </span>
       )}
@@ -90,7 +97,7 @@ export function TextField({
       </Label>
       <div className="relative">
         {prefix && (
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-slate-500">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-stone-600">
             {prefix}
           </span>
         )}
@@ -110,7 +117,7 @@ export function TextField({
           className={`${base} ${ring(!!error)} ${suffix ? 'pr-14' : ''}`}
         />
         {suffix && (
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs uppercase tracking-wider text-slate-500">
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-xs uppercase tracking-wider text-stone-600">
             {suffix}
           </span>
         )}
@@ -118,7 +125,7 @@ export function TextField({
       {error ? (
         <ErrorText id={errId}>{error}</ErrorText>
       ) : hint ? (
-        <p id={hintId} className="mt-2 text-[13px] text-slate-500">
+        <p id={hintId} className="mt-2 text-[13px] text-stone-600">
           {hint}
         </p>
       ) : null}
@@ -158,7 +165,7 @@ export function TextArea({
       {error ? (
         <ErrorText id={errId}>{error}</ErrorText>
       ) : hint ? (
-        <p className="mt-2 text-[13px] text-slate-500">{hint}</p>
+        <p className="mt-2 text-[13px] text-stone-600">{hint}</p>
       ) : null}
     </div>
   );
@@ -195,7 +202,7 @@ export function SelectField({
           id={id}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errId : undefined}
-          className={`${base} ${ring(!!error)} cursor-pointer appearance-none pr-11 [&>option]:bg-ink-850 [&>option]:text-white`}
+          className={`${base} ${ring(!!error)} cursor-pointer appearance-none pr-11 [&>option]:bg-paper [&>option]:text-ink-900`}
         >
           {placeholder && (
             <option value="" disabled>
@@ -211,7 +218,7 @@ export function SelectField({
         <svg
           aria-hidden
           viewBox="0 0 12 8"
-          className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 fill-none stroke-slate-500"
+          className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 fill-none stroke-stone-400"
           strokeWidth="1.6"
         >
           <path d="M1 1.5 6 6.5 11 1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -252,8 +259,8 @@ export function Choice<T extends string>({
 
   return (
     <fieldset aria-describedby={error ? errId : undefined}>
-      <legend className="mb-1 text-[13px] font-500 text-slate-300">{legend}</legend>
-      {hint && <p className="mb-3.5 text-[13px] text-slate-500">{hint}</p>}
+      <legend className="mb-1 text-[13px] font-500 text-stone-800">{legend}</legend>
+      {hint && <p className="mb-3.5 text-[13px] text-stone-600">{hint}</p>}
       <div
         className={`mt-3 grid gap-2.5 ${
           columns === 3 ? 'sm:grid-cols-3' : columns === 2 ? 'sm:grid-cols-2' : ''
@@ -270,14 +277,14 @@ export function Choice<T extends string>({
               onClick={() => onChange(o.value)}
               className={`group relative flex items-start gap-3.5 rounded-xl border p-4 text-left transition-all duration-300 ease-premium ${
                 active
-                  ? 'border-accent/60 bg-accent/[0.07]'
-                  : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                  ? 'border-accent bg-accent-wash'
+                  : 'border-line bg-paper hover:border-line-strong'
               }`}
             >
               <span
                 aria-hidden
                 className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border transition-colors duration-300 ${
-                  active ? 'border-accent bg-accent' : 'border-white/25'
+                  active ? 'border-accent bg-accent' : 'border-line-strong'
                 }`}
               >
                 {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
@@ -285,13 +292,13 @@ export function Choice<T extends string>({
               <span className="min-w-0">
                 <span
                   className={`block text-[15px] leading-snug transition-colors duration-300 ${
-                    active ? 'text-white' : 'text-slate-300 group-hover:text-white'
+                    active ? 'text-ink-900' : 'text-stone-800 group-hover:text-ink-900'
                   }`}
                 >
                   {o.label}
                 </span>
                 {o.hint && (
-                  <span className="mt-1 block text-[13px] leading-relaxed text-slate-500">
+                  <span className="mt-1 block text-[13px] leading-relaxed text-stone-600">
                     {o.hint}
                   </span>
                 )}
@@ -323,9 +330,9 @@ export function BoolChoice({
 }) {
   return (
     <fieldset>
-      <legend className="text-[13px] font-500 text-slate-300">{legend}</legend>
-      {hint && <p className="mt-1.5 text-[13px] text-slate-500">{hint}</p>}
-      <div className="mt-3 inline-flex rounded-xl border border-white/10 bg-white/[0.02] p-1">
+      <legend className="text-[13px] font-500 text-stone-800">{legend}</legend>
+      {hint && <p className="mt-1.5 text-[13px] text-stone-600">{hint}</p>}
+      <div className="mt-3 inline-flex rounded-xl border border-line bg-paper-200 p-1">
         {[
           { v: false, label: no },
           { v: true, label: yes },
@@ -338,8 +345,8 @@ export function BoolChoice({
             onClick={() => onChange(o.v)}
             className={`rounded-lg px-6 py-2.5 text-sm transition-colors duration-300 ${
               value === o.v
-                ? 'bg-platinum text-ink-950'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-paper text-ink-900 shadow-card'
+                : 'text-stone-700 hover:text-ink-900'
             }`}
           >
             {o.label}
@@ -378,12 +385,12 @@ export function Checkbox({
         <span
           aria-hidden
           className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[5px] border transition-colors duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-accent/70 ${
-            checked ? 'border-accent bg-accent' : error ? 'border-accent/60' : 'border-white/25'
+            checked ? 'border-accent bg-accent' : error ? 'border-danger' : 'border-line-strong'
           }`}
         >
           {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
         </span>
-        <span className="text-[13px] leading-relaxed text-slate-400">{children}</span>
+        <span className="text-[13px] leading-relaxed text-stone-700">{children}</span>
       </label>
       {error && <ErrorText id={errId}>{error}</ErrorText>}
     </div>

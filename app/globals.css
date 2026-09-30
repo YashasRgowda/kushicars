@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
     /* One easing across the whole site — motion that feels authored, not default. */
     --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -18,8 +18,11 @@
   }
 
   body {
-    @apply bg-ink-950 text-slate-100 font-sans antialiased;
+    @apply bg-paper-100 text-ink-900 font-sans antialiased;
     overflow-x: hidden;
+    /* Jost on white is a shade heavier than Jost on black — the same stroke
+       that needed thickening against a dark ground now needs restraining. */
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Bodoni's thin strokes shimmer when browsers snap them to the pixel grid. */
@@ -32,20 +35,20 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-accent/70 ring-offset-2 ring-offset-ink-950;
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-paper-100;
   }
 
   ::-webkit-scrollbar {
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-ink-950;
+    @apply bg-paper-200;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-ink-600 rounded-full;
+    @apply bg-line-strong rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-ink-500;
+    @apply bg-stone-400;
   }
 }
 
@@ -58,20 +61,73 @@
   }
 
   /* ---------------------------------------------------------------
+     Section rhythm
+
+     One vertical measure for every band on the page, set here rather
+     than per component.
+
+     It used to be set per component — py-28 on one section, py-44 on the
+     next — and because two adjacent sections each pay their own padding,
+     those numbers ADD. The floor between the collection and the sell band
+     came to 176 + 176 + an inner 80, which is 432px of nothing: at that
+     size a gap stops reading as air and starts reading as a section that
+     failed to load.
+
+     96px a side on a laptop, so any two sections are 192px apart, always
+     the same. Retune the whole site from these three numbers.
+     --------------------------------------------------------------- */
+  .section-y {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  /* A band that is texture rather than argument — the brand marquee —
+     sits tighter than a section with something to say. */
+  .band-y {
+    @apply py-12 lg:py-14;
+  }
+
+  /* ---------------------------------------------------------------
      Type treatments
      --------------------------------------------------------------- */
 
-  /* Brushed-metal sheen for hero headlines. Light falls from above, so the
-     highlight sits high and the shadow low — same as a real chrome badge. */
-  .chrome-text {
+  /* Brushed metal for type on a DARK ground — the hero, and only the hero.
+     It is a full-bleed video section on an otherwise light site, so its type
+     is light while the rest of the page is ink. Light falls from above, so
+     the highlight sits high and the shadow low, same as a real chrome badge. */
+  .chrome-text-light {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(
       177deg,
       #ffffff 0%,
-      #f3f1ec 26%,
-      #a8b0be 52%,
-      #eceae5 68%,
+      #f7f1e2 26%,
+      #d9c8a2 52%,
+      #f4efe2 68%,
       #ffffff 100%
+    );
+  }
+
+  /* Machined graphite for hero headlines — a chrome badge, cast dark.
+
+     A chrome badge on a white wall is read by its SHADOWS, not its
+     highlights: the letterform is dark, and what travels across it is a
+     lighter band where the bevel turns to the light. So the ramp is
+     inverted from the dark-theme version — deep at top and bottom, open in
+     the middle — and it never lightens past the mid stop, because a pale
+     band inside a Bodoni hairline is the point at which the word stops
+     being readable at a glance.
+
+     The ramp is the logo's own lettering gradient (#1F6B4B -> #0F4630 ->
+     #07291C) with a lit stop added, so a headline is cast in the same green
+     as the mark rather than in neutral graphite beside it. */
+  .chrome-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      177deg,
+      #07291c 0%,
+      #0f4630 26%,
+      #2e7a58 52%,
+      #123c2a 68%,
+      #07291c 100%
     );
   }
 
@@ -79,11 +135,11 @@
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(
       110deg,
-      #ffffff 0%,
-      #cbd5e1 30%,
-      #f87171 50%,
-      #cbd5e1 70%,
-      #ffffff 100%
+      #07291c 0%,
+      #15523a 30%,
+      #c9a04a 50%,
+      #15523a 70%,
+      #07291c 100%
     );
     background-size: 220% auto;
     animation: gradient-pan 7s ease-in-out infinite;
@@ -103,28 +159,52 @@
      Surfaces & materials
      --------------------------------------------------------------- */
 
-  /* Real film grain. A turbulence field beats a dot pattern — it has no
-     repeating tell at any zoom, which is what makes the black look deep. */
+  /* Paper tooth. Same turbulence field, read the other way round.
+
+     On black this was film grain at 22% in `overlay`, and it made the dark
+     look deep. Lay that on white and it is simply dirt — overlay lifts the
+     dark half of the noise into mid-grey and the page goes grubby. So it
+     multiplies instead, which only ever darkens, and at a twentieth of the
+     strength: enough to stop a large white panel reading as a flat digital
+     fill, far too little to see as speckle. */
   .noise::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.22;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Film grain for the hero. The .noise above multiplies, which is right on
+     paper and does nothing over black; this is the turbulence field in
+     `overlay`, which stops a large area of near-black banding into visible
+     steps on a cheap panel — and this clip is a golden-hour sky, which is
+     exactly the kind of smooth gradient that bands. */
+  .noise-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.16;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   .grain {
     background-image: radial-gradient(
-      rgba(255, 255, 255, 0.025) 1px,
+      rgba(10, 32, 22, 0.05) 1px,
       transparent 1px
     );
     background-size: 3px 3px;
   }
 
-  /* A border that fades — catches light at the top edge and dissolves at the
-     bottom, the way a lit panel actually reads. Flat 1px borders look cheap. */
+  /* A border that fades. On black it was a lit top edge dissolving into the
+     dark; on paper it is the opposite reading — the edge a card casts onto
+     the sheet beneath it, firmest where the card meets the page at the
+     bottom and almost gone along the lit top. Flat 1px borders look cheap
+     either way. */
   .hairline {
     position: relative;
   }
@@ -136,10 +216,10 @@
     padding: 1px;
     background: linear-gradient(
       160deg,
-      rgba(255, 255, 255, 0.22) 0%,
-      rgba(255, 255, 255, 0.06) 28%,
-      rgba(255, 255, 255, 0.02) 55%,
-      rgba(255, 255, 255, 0.07) 100%
+      rgba(10, 32, 22, 0.07) 0%,
+      rgba(10, 32, 22, 0.10) 28%,
+      rgba(10, 32, 22, 0.13) 55%,
+      rgba(10, 32, 22, 0.16) 100%
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
@@ -150,35 +230,27 @@
     z-index: 1;
   }
 
+  /* The gold edge, for the few panels that earn a flourish. */
   .hairline-accent::before {
     background: linear-gradient(
       160deg,
-      rgba(248, 113, 113, 0.55) 0%,
-      rgba(220, 38, 38, 0.18) 30%,
-      rgba(255, 255, 255, 0.04) 60%,
-      rgba(220, 38, 38, 0.22) 100%
+      rgba(201, 160, 74, 0.7) 0%,
+      rgba(201, 160, 74, 0.32) 30%,
+      rgba(10, 32, 22, 0.08) 60%,
+      rgba(201, 160, 74, 0.42) 100%
     );
   }
 
-  /* Frosted panel with a lit top edge. */
+  /* Frosted panel. On paper the frost has to be mostly opaque white — a 3%
+     tint over a light page is invisible — so the blur is doing the work of
+     separating it from whatever scrolls underneath, and a hairline edge
+     does the rest. */
   .glass {
-    @apply bg-white/[0.035] backdrop-blur-xl;
+    @apply bg-white/70 backdrop-blur-xl;
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-      0 24px 60px -24px rgba(0, 0, 0, 0.9);
-  }
-
-  /* Darkens the frame edges so the eye is pulled to the centre. */
-  .vignette::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      110% 85% at 50% 45%,
-      transparent 40%,
-      rgba(4, 5, 7, 0.55) 100%
-    );
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 1px 0 0 rgba(10, 32, 22, 0.06),
+      0 24px 56px -28px rgba(10, 32, 22, 0.18);
   }
 
   /* ---------------------------------------------------------------
@@ -229,7 +301,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.85),
       transparent
     );
     animation: shimmer 1.6s infinite;
@@ -253,12 +325,15 @@
     height: 20px;
     width: 20px;
     border-radius: 999px;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #cfd4dd 60%, #9aa3b2);
+    background: radial-gradient(circle at 35% 30%, #ffffff, #ffffff 55%, #e6dcc4);
     border: none;
+    /* The first inset ring is the thumb's own edge. Without it a white knob
+       on a white track simply is not there. */
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.6),
-      0 6px 16px -4px rgba(0, 0, 0, 0.8),
-      0 0 0 0 rgba(220, 38, 38, 0.35);
+      inset 0 0 0 1px rgba(10, 32, 22, 0.16),
+      0 1px 2px rgba(10, 32, 22, 0.16),
+      0 4px 10px -2px rgba(10, 32, 22, 0.20),
+      0 0 0 0 rgba(21, 82, 58, 0.28);
     transition:
       transform 0.18s var(--ease-premium),
       box-shadow 0.18s var(--ease-premium);
@@ -267,17 +342,18 @@
   .range-premium:focus-visible::-webkit-slider-thumb {
     transform: scale(1.16);
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.6),
-      0 6px 16px -4px rgba(0, 0, 0, 0.8),
-      0 0 0 8px rgba(220, 38, 38, 0.16);
+      inset 0 0 0 1px rgba(10, 32, 22, 0.2),
+      0 1px 2px rgba(10, 32, 22, 0.16),
+      0 4px 10px -2px rgba(10, 32, 22, 0.2),
+      0 0 0 8px rgba(21, 82, 58, 0.14);
   }
   .range-premium::-moz-range-thumb {
     height: 20px;
     width: 20px;
-    border: none;
+    border: 1px solid rgba(10, 32, 22, 0.16);
     border-radius: 999px;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #cfd4dd 60%, #9aa3b2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 6px 16px -4px rgba(0, 0, 0, 0.8);
+    background: radial-gradient(circle at 35% 30%, #ffffff, #ffffff 55%, #e6dcc4);
+    box-shadow: 0 1px 2px rgba(10, 32, 22, 0.16), 0 4px 10px -2px rgba(10, 32, 22, 0.2);
   }
 
   /* ---------------------------------------------------------------
@@ -301,10 +377,10 @@
   .range-dual__track {
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e6dcc4;
   }
   .range-dual__fill {
-    background: linear-gradient(90deg, #7f1220, #dc2626);
+    background: linear-gradient(90deg, #1f6b4b, #15523a);
   }
 
   .range-dual input[type='range'] {
@@ -328,10 +404,11 @@
     width: 16px;
     border-radius: 999px;
     cursor: grab;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe2 62%, #9aa3b2);
+    background: radial-gradient(circle at 35% 30%, #ffffff, #ffffff 55%, #efe9dc);
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.7),
-      0 4px 10px -2px rgba(0, 0, 0, 0.8);
+      inset 0 0 0 1px rgba(10, 32, 22, 0.18),
+      0 1px 2px rgba(10, 32, 22, 0.18),
+      0 3px 8px -2px rgba(10, 32, 22, 0.22);
     transition:
       transform 0.18s var(--ease-premium),
       box-shadow 0.18s var(--ease-premium);
@@ -340,37 +417,40 @@
   .range-dual input[type='range']:focus-visible::-webkit-slider-thumb {
     transform: scale(1.15);
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.7),
-      0 4px 10px -2px rgba(0, 0, 0, 0.8),
-      0 0 0 7px rgba(220, 38, 38, 0.16);
+      inset 0 0 0 1px rgba(10, 32, 22, 0.22),
+      0 1px 2px rgba(10, 32, 22, 0.18),
+      0 3px 8px -2px rgba(10, 32, 22, 0.22),
+      0 0 0 7px rgba(21, 82, 58, 0.14);
   }
   .range-dual input[type='range']::-moz-range-thumb {
     pointer-events: auto;
     height: 16px;
     width: 16px;
-    border: none;
+    border: 1px solid rgba(10, 32, 22, 0.18);
     border-radius: 999px;
     cursor: grab;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #d7dbe2 62%, #9aa3b2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 4px 10px -2px rgba(0, 0, 0, 0.8);
+    background: radial-gradient(circle at 35% 30%, #ffffff, #ffffff 55%, #efe9dc);
+    box-shadow: 0 1px 2px rgba(10, 32, 22, 0.18), 0 3px 8px -2px rgba(10, 32, 22, 0.22);
   }
   .range-dual input[type='range']::-moz-range-track {
     background: transparent;
   }
 
-  /* Google's embed has no dark style without the paid JS API, and a sheet of
-     white map against this page is the one thing on it that looks unfinished.
-     Inverting and rotating the hue back gives a usable dark map: roads stay
-     lighter than land, and the labels stay legible. */
-  .map-dark {
-    filter: invert(0.92) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+  /* The dark theme had to invert Google's embed and rotate the hue back to
+     stop a sheet of white map looking unfinished against the page. On a
+     light page that whole fight is off: the embed already ships the right
+     way round, so nothing is inverted here. All that is left is a touch of
+     desaturation, which pulls Google's saturated motorway yellows and park
+     greens back towards this site's own quieter neutrals. */
+  .map-frame {
+    filter: saturate(0.82) contrast(1.02);
   }
 
   /* A scrollbar for panels inside the page — the 10px chrome one is far
      too loud on a sticky filter rail sitting beside the content. */
   .scroll-slim {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+    scrollbar-color: rgba(10, 32, 22, 0.16) transparent;
   }
   .scroll-slim::-webkit-scrollbar {
     width: 4px;
@@ -379,11 +459,11 @@
     background: transparent;
   }
   .scroll-slim::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(10, 32, 22, 0.14);
     border-radius: 999px;
   }
   .scroll-slim:hover::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(10, 32, 22, 0.28);
   }
 
   /* Hides the number-input spinners on the sell form's rupee fields. */
@@ -406,4 +486,16 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* The .no-spin utility is usually applied to a field WRAPPER — the shared
+   TextField puts className on its container, not on the input — so the
+   spinners have to be reached through it as well. */
+.no-spin input::-webkit-outer-spin-button,
+.no-spin input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spin input {
+  -moz-appearance: textfield;
 }

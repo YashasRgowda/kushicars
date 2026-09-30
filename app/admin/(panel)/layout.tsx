@@ -1,83 +1,80 @@
 import Link from 'next/link';
-import { Car, Settings as SettingsIcon, LogOut, ExternalLink } from 'lucide-react';
+import { LogOut, ExternalLink } from 'lucide-react';
+import AdminNav from '@/components/admin/AdminNav';
+import AdminTabBar from '@/components/admin/AdminTabBar';
+import Wordmark from '@/components/Wordmark';
 import { signOut } from '../actions';
 
+/**
+ * The shell around every panel screen.
+ *
+ * One bar, two destinations, and a lot of air beneath it. The content column
+ * is narrower than the public site's on purpose: a settings screen that runs
+ * the full width of a desktop monitor is tiring to fill in, and nothing here
+ * needs more than this.
+ */
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-dvh bg-ink-950 text-slate-100">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-ink-950/85 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-          <div className="flex items-center gap-6">
-            <Link href="/admin" className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center rounded-md bg-accent text-white">
-                <span className="font-display text-sm font-700 leading-none">
-                  K
-                </span>
-              </span>
-              <span className="font-display text-lg font-600">
-                Kushi Cars<span className="text-accent">.</span>
-              </span>
+    <div className="relative min-h-dvh bg-paper-100 text-ink-900">
+      {/* The same faint bloom the public pages open with. */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 h-[460px] bg-[radial-gradient(70%_100%_at_50%_0%,rgba(220,38,38,0.045),transparent_72%)]"
+      />
+
+      <header className="sticky top-0 z-40 border-b border-line bg-paper-100/85 backdrop-blur-xl">
+        <div className="mx-auto flex h-[4.5rem] max-w-5xl items-center justify-between gap-4 px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-7">
+            <Link
+              href="/admin"
+              aria-label="Kushi Cars admin — your cars"
+              className="group flex shrink-0 items-center gap-2.5"
+            >
+              <Wordmark name="Kushi Cars" size="sm" priority />
             </Link>
 
-            <nav className="hidden items-center gap-1 sm:flex">
-              <NavLink href="/admin" icon={<Car className="h-4 w-4" />}>
-                Cars
-              </NavLink>
-              <NavLink
-                href="/admin/settings"
-                icon={<SettingsIcon className="h-4 w-4" />}
-              >
-                Contact details
-              </NavLink>
-            </nav>
+            <span aria-hidden className="hidden h-6 w-px bg-line-strong sm:block" />
+
+            {/* On a phone the navigation lives in the bar at the bottom,
+                where the thumb is. */}
+            <div className="hidden sm:block">
+              <AdminNav />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1">
             <a
               href="/"
               target="_blank"
               rel="noreferrer"
-              className="hidden items-center gap-1.5 rounded-full border border-white/10 px-3.5 py-2 text-xs text-slate-300 transition-colors hover:border-white/25 hover:text-white sm:flex"
+              className="hidden items-center gap-1.5 rounded-full border border-line px-4 py-2 text-[13px] text-stone-800 transition-colors duration-300 hover:border-line-strong hover:text-ink-900 sm:flex"
             >
-              View website <ExternalLink className="h-3.5 w-3.5" />
+              View website
+              <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.6} />
             </a>
             <form action={signOut}>
               <button
                 type="submit"
-                className="flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs text-slate-400 transition-colors hover:text-white"
+                aria-label="Sign out"
+                className="flex items-center gap-1.5 rounded-full px-3 py-2 text-[13px] text-stone-600 transition-colors duration-300 hover:text-ink-900"
               >
-                <LogOut className="h-3.5 w-3.5" /> Sign out
+                <LogOut className="h-4 w-4" strokeWidth={1.6} />
+                <span className="hidden sm:inline">Sign out</span>
               </button>
             </form>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-8">{children}</main>
-    </div>
-  );
-}
+      <main className="relative mx-auto max-w-5xl px-6 pb-36 pt-12 sm:pb-28 sm:pt-14 lg:pt-20">
+        {children}
+      </main>
 
-function NavLink({
-  href,
-  icon,
-  children,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-2 rounded-full px-3.5 py-2 text-sm text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-    >
-      {icon}
-      {children}
-    </Link>
+      <AdminTabBar />
+    </div>
   );
 }

@@ -85,11 +85,6 @@ export default async function CarPage({
         eyebrow={car.tag ?? 'In stock'}
         title={name}
         lede={subtitle}
-        crumbs={[
-          { label: 'Home', href: '/' },
-          { label: 'Cars', href: '/cars' },
-          { label: car.model },
-        ]}
         compact
       />
 
@@ -102,7 +97,7 @@ export default async function CarPage({
             <Gallery car={car} />
 
             {car.sold && (
-              <p className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-slate-300">
+              <p className="mt-6 rounded-xl border border-line bg-paper px-5 py-4 text-sm text-stone-800">
                 This one has been sold. We usually have something similar
                 arriving — ask us what is coming in.
               </p>
@@ -121,7 +116,7 @@ export default async function CarPage({
       <section className="mx-auto mt-24 max-w-7xl px-6 lg:mt-32 lg:px-10">
         <div className="grid gap-x-14 gap-y-14 lg:grid-cols-[1.55fr_1fr]">
           <div>
-            <h2 className="font-display text-2xl font-600 text-white">
+            <h2 className="font-display text-2xl font-600 text-ink-900">
               Specification
             </h2>
             <div className="mt-9">
@@ -130,16 +125,16 @@ export default async function CarPage({
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-600 text-white">
+            <h2 className="font-display text-2xl font-600 text-ink-900">
               Included in the price
             </h2>
             <ul className="mt-9 space-y-4">
               {included.map((item) => (
                 <li key={item} className="flex items-start gap-3.5">
-                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/15">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-wash">
                     <Check className="h-3 w-3 text-accent" strokeWidth={3} />
                   </span>
-                  <span className="text-[15px] leading-relaxed text-slate-300">
+                  <span className="text-[15px] leading-relaxed text-stone-800">
                     {item}
                   </span>
                 </li>
@@ -152,13 +147,13 @@ export default async function CarPage({
       {/* ---------------- Similar ---------------- */}
       {similar.length > 0 && (
         <section className="mx-auto mt-28 max-w-7xl px-6 pb-32 lg:mt-40 lg:px-10 lg:pb-44">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-t border-white/[0.07] pt-14">
-            <h2 className="font-display text-2xl font-600 text-white">
+          <div className="flex flex-wrap items-end justify-between gap-6 border-t border-line-soft pt-14">
+            <h2 className="font-display text-2xl font-600 text-ink-900">
               You might also consider
             </h2>
             <Link
               href="/cars"
-              className="group flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white"
+              className="group flex items-center gap-2 text-sm text-stone-700 transition-colors hover:text-ink-900"
             >
               See all {cars.length} cars
               <ArrowRight

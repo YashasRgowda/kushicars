@@ -26,18 +26,18 @@ export default function ContactForm() {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: EASE }}
-        className="hairline rounded-2xl bg-ink-850/60 p-10 text-center backdrop-blur-sm"
+        className="hairline rounded-2xl bg-paper p-10 text-center shadow-card"
       >
-        <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-400" strokeWidth={1.25} />
-        <p className="mt-6 font-display text-2xl font-600 text-white">
+        <CheckCircle2 className="mx-auto h-10 w-10 text-accent-soft" strokeWidth={1.25} />
+        <p className="mt-6 font-display text-2xl font-600 text-ink-900">
           Message received
         </p>
-        <p className="mx-auto mt-3 max-w-sm text-pretty text-[15px] leading-relaxed text-slate-400">
+        <p className="mx-auto mt-3 max-w-sm text-pretty text-[15px] leading-relaxed text-stone-700">
           We will get back to you today if the showroom is open, and first
           thing tomorrow if it is not.
         </p>
         {state.ref && (
-          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-600">
+          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
             Ref {state.ref}
           </p>
         )}
@@ -82,12 +82,12 @@ export default function ContactForm() {
         hint="The more specific you are, the more useful our reply will be."
       />
 
-      {state.error && <p className="text-[13px] text-accent-soft">{state.error}</p>}
+      {state.error && <p className="text-[13px] text-danger-ink">{state.error}</p>}
 
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-platinum px-8 py-4 text-sm font-500 text-ink-950 shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.02] disabled:cursor-wait disabled:opacity-60 sm:w-auto"
+        className="w-full rounded-full bg-accent px-8 py-4 text-sm font-500 text-white shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.02] disabled:cursor-wait disabled:opacity-60 sm:w-auto"
       >
         {pending ? 'Sending…' : 'Send message'}
       </button>

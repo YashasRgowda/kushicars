@@ -91,12 +91,12 @@ export default function PhotoUpload({
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-[13px] font-500 text-slate-300">Photos of the car</p>
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-600">
+        <p className="text-[13px] font-500 text-stone-800">Photos of the car</p>
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
           Optional · {paths.length}/{MAX_PHOTOS}
         </span>
       </div>
-      <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
+      <p className="mt-1.5 text-[13px] leading-relaxed text-stone-600">
         Four is plenty: front three-quarter, rear three-quarter, the dashboard
         with the odometer showing, and the interior. Good photos usually move a
         quote up, not down.
@@ -112,12 +112,12 @@ export default function PhotoUpload({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.28, ease: EASE }}
-              className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-ink-850"
+              className="group relative aspect-square overflow-hidden rounded-xl border border-line bg-paper-300"
             >
               {previews[path] ? (
                 <img src={previews[path]} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="grid h-full w-full place-items-center text-slate-600">
+                <div className="grid h-full w-full place-items-center text-muted">
                   <ImagePlus className="h-5 w-5" strokeWidth={1.5} />
                 </div>
               )}
@@ -138,7 +138,7 @@ export default function PhotoUpload({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={busy}
-            className="grid aspect-square place-items-center rounded-xl border border-dashed border-white/15 text-slate-500 transition-colors duration-300 hover:border-white/35 hover:text-white disabled:cursor-wait"
+            className="grid aspect-square place-items-center rounded-xl border border-dashed border-line text-stone-600 transition-colors duration-300 hover:border-line-strong hover:text-ink-900 disabled:cursor-wait"
           >
             {busy ? (
               <Loader2 className="h-5 w-5 animate-spin" strokeWidth={1.5} />
@@ -161,7 +161,7 @@ export default function PhotoUpload({
         className="sr-only"
       />
 
-      {error && <p className="mt-3 text-[13px] text-accent-soft">{error}</p>}
+      {error && <p className="mt-3 text-[13px] text-danger-ink">{error}</p>}
     </div>
   );
 }

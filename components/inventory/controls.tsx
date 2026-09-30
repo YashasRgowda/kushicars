@@ -15,7 +15,7 @@ import { motion, LayoutGroup } from 'framer-motion';
 /** The small caps label that opens every filter group. */
 export function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[10px] font-500 uppercase tracking-[0.22em] text-slate-500">
+    <p className="font-mono text-[10px] font-500 uppercase tracking-[0.22em] text-stone-600">
       {children}
     </p>
   );
@@ -32,10 +32,10 @@ export function Field({
   hint?: string;
 }) {
   return (
-    <div className="border-t border-white/[0.07] pt-6">
+    <div className="border-t border-line-soft pt-6">
       <FieldLabel>{label}</FieldLabel>
       <div className="mt-4">{children}</div>
-      {hint && <p className="mt-3 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-3 text-xs text-stone-600">{hint}</p>}
     </div>
   );
 }
@@ -82,15 +82,20 @@ export function Segmented<T extends string | number>({
               type="button"
               onClick={() => onChange(o.value)}
               aria-pressed={active}
-              className={`relative rounded-lg px-3 py-2 text-[13px] font-400 transition-colors duration-300 ${
-                active ? 'text-ink-950' : 'text-slate-400 hover:text-white'
+              // Every chip carries a tint so the group reads as a set of
+              // choices at a glance, and the selected one is an ink pill —
+              // the same shape the site uses everywhere else for "this is
+              // the strong thing". On black a pale pill did that job; on
+              // paper only ink can.
+              className={`relative rounded-lg bg-paper-200 px-3 py-2 text-[13px] font-400 transition-colors duration-300 ${
+                active ? 'text-white' : 'text-stone-700 hover:bg-paper-300 hover:text-ink-900'
               }`}
             >
               {active && (
                 <motion.span
                   layoutId={layoutId}
                   transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                  className="absolute inset-0 rounded-lg bg-platinum"
+                  className="absolute inset-0 rounded-lg bg-accent"
                 />
               )}
               <span className="relative whitespace-nowrap">{o.label}</span>
@@ -132,10 +137,10 @@ export function OptionList({
               aria-pressed={active}
               className={`group relative flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-[13px] transition-colors duration-200 ${
                 active
-                  ? 'text-white'
+                  ? 'text-ink-900'
                   : empty
-                    ? 'cursor-not-allowed text-slate-700'
-                    : 'text-slate-400 hover:bg-white/[0.04] hover:text-white'
+                    ? 'cursor-not-allowed text-stone-300'
+                    : 'text-stone-700 hover:bg-paper hover:text-ink-900'
               }`}
             >
               {/* The marker for the current selection — a lit edge, not a fill. */}
@@ -148,7 +153,7 @@ export function OptionList({
               <span className="truncate pl-2">{o.label}</span>
               <span
                 className={`ml-3 shrink-0 font-mono text-[10px] tabular-nums ${
-                  active ? 'text-slate-400' : 'text-slate-600'
+                  active ? 'text-stone-700' : 'text-muted'
                 }`}
               >
                 {o.count}
@@ -189,9 +194,9 @@ export function PriceRange({
 
   return (
     <div>
-      <div className="mb-5 flex items-baseline justify-between font-mono text-xs tabular-nums text-slate-300">
+      <div className="mb-5 flex items-baseline justify-between font-mono text-xs tabular-nums text-stone-800">
         <span>{format(min)}</span>
-        <span className="text-slate-600">—</span>
+        <span className="text-muted">—</span>
         <span>{format(max)}</span>
       </div>
 

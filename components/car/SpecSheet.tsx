@@ -45,10 +45,10 @@ export default function SpecSheet({ car }: { car: Car }) {
         <div key={label} className="flex items-start gap-3.5">
           <Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent/70" strokeWidth={1.5} />
           <div className="min-w-0">
-            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600">
               {label}
             </dt>
-            <dd className="mt-1.5 truncate text-[15px] text-white">{value}</dd>
+            <dd className="mt-1.5 truncate text-[15px] text-ink-900">{value}</dd>
           </div>
         </div>
       ))}

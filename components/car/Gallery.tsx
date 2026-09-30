@@ -10,6 +10,7 @@ import {
   useReducedMotion,
   type PanInfo,
 } from 'framer-motion';
+
 import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react';
 import type { Car } from '@/lib/types';
 import { canOptimize } from '@/lib/photos';
@@ -22,6 +23,12 @@ import { EASE } from '@/components/ui/motion';
    full screen. Every route leads to the same index, and the direction of
    travel is remembered so a photo always leaves the way you pushed it.
    ================================================================== */
+
+/**
+ * How long the full-screen view takes to fade out, and therefore how long
+ * after a close it leaves the page. Matches the `sheet-out` animation.
+ */
+const EXIT_MS = 240;
 
 /** A swipe counts if it travels this far, or is flicked this hard. */
 const SWIPE_DISTANCE = 90;
@@ -51,10 +58,51 @@ export default function Gallery({ car }: { car: Car }) {
   const photos = car.photos;
   const count = photos.length;
   const [[index, direction], setState] = useState<[number, number]>([0, 0]);
-  const [open, setOpen] = useState(false);
   const reduce = !!useReducedMotion();
   const isClient = useIsClient();
   const stageRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Whether the full-screen view is in the page, and whether it is showing.
+   *
+   * Two pieces of state, because AnimatePresence could not be trusted to
+   * take this one away. Its exit never resolved here — the view stayed in
+   * the document at opacity 0 with pointer-events auto, and because the
+   * scroll lock is released by that component's UNMOUNT, the whole listing
+   * stayed frozen behind it: a buyer who opened a photo and closed it again
+   * could no longer scroll or tap anything on the page.
+   *
+   * The removal is a timeout now, which cannot fail to fire, and the view
+   * drops its pointer events the moment it starts leaving.
+   */
+  const [lightboxMounted, setLightboxMounted] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const exitTimer = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (exitTimer.current !== null) clearTimeout(exitTimer.current);
+    },
+    [],
+  );
+
+  const openLightbox = useCallback(() => {
+    if (exitTimer.current !== null) {
+      clearTimeout(exitTimer.current);
+      exitTimer.current = null;
+    }
+    setLightboxMounted(true);
+    setLightboxOpen(true);
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxOpen(false);
+    if (exitTimer.current !== null) clearTimeout(exitTimer.current);
+    exitTimer.current = window.setTimeout(() => {
+      setLightboxMounted(false);
+      exitTimer.current = null;
+    }, EXIT_MS);
+  }, []);
 
   const label = `${car.year} ${car.brand} ${car.model}`;
 
@@ -78,11 +126,11 @@ export default function Gallery({ car }: { car: Car }) {
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
       if (e.key === 'ArrowLeft') paginate(-1);
       else if (e.key === 'ArrowRight') paginate(1);
-      else if (e.key === 'Escape') setOpen(false);
+      else if (e.key === 'Escape') closeLightbox();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [paginate]);
+  }, [paginate, closeLightbox]);
 
   if (count === 0) return <EmptyPlate car={car} />;
 
@@ -91,7 +139,7 @@ export default function Gallery({ car }: { car: Car }) {
       {/* ---------------- Stage ---------------- */}
       <div
         ref={stageRef}
-        className="hairline group relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-ink-900"
+        className="hairline group relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-paper-300"
       >
         <Slides
           photos={photos}
@@ -102,7 +150,7 @@ export default function Gallery({ car }: { car: Car }) {
           fit="cover"
           sizes="(min-width: 1024px) 60vw, 100vw"
           onPaginate={paginate}
-          onTap={() => setOpen(true)}
+          onTap={openLightbox}
           eagerFirst
         />
 
@@ -128,7 +176,7 @@ export default function Gallery({ car }: { car: Car }) {
           )}
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={openLightbox}
             aria-label="View photos full screen"
             className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-black/45 text-white backdrop-blur-md transition-all duration-300 ease-premium hover:scale-105 hover:bg-white hover:text-ink-950"
           >
@@ -154,21 +202,19 @@ export default function Gallery({ car }: { car: Car }) {
 
       {/* ---------------- Full screen ---------------- */}
       {isClient &&
+        lightboxMounted &&
         createPortal(
-          <AnimatePresence>
-            {open && (
-              <Lightbox
-                photos={photos}
-                index={index}
-                direction={direction}
-                label={label}
-                reduce={reduce}
-                onPaginate={paginate}
-                onPick={jump}
-                onClose={() => setOpen(false)}
-              />
-            )}
-          </AnimatePresence>,
+          <Lightbox
+            photos={photos}
+            index={index}
+            direction={direction}
+            label={label}
+            reduce={reduce}
+            open={lightboxOpen}
+            onPaginate={paginate}
+            onPick={jump}
+            onClose={closeLightbox}
+          />,
           document.body,
         )}
     </div>
@@ -321,7 +367,7 @@ function Segments({ count, index }: { count: number; index: number }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-x-4 top-4 flex gap-1.5">
       {Array.from({ length: count }).map((_, i) => (
-        <span key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-white/25">
+        <span key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-black/30">
           <motion.span
             initial={false}
             animate={{ scaleX: i <= index ? 1 : 0 }}
@@ -336,7 +382,7 @@ function Segments({ count, index }: { count: number; index: number }) {
 
 function Counter({ index, count }: { index: number; count: number }) {
   return (
-    <span className="flex items-baseline overflow-hidden rounded-full bg-black/45 px-3.5 py-1.5 font-mono text-[11px] tabular-nums tracking-[0.14em] text-white backdrop-blur-md">
+    <span className="flex items-baseline overflow-hidden rounded-full bg-black/70 px-3.5 py-1.5 font-mono text-[11px] tabular-nums tracking-[0.14em] text-white backdrop-blur-md">
       <span className="relative inline-block h-[1.2em] w-[2ch] overflow-hidden">
         <AnimatePresence initial={false} mode="popLayout">
           <motion.span
@@ -351,8 +397,8 @@ function Counter({ index, count }: { index: number; count: number }) {
           </motion.span>
         </AnimatePresence>
       </span>
-      <span className="mx-1.5 text-white/40">/</span>
-      <span className="text-white/60">{String(count).padStart(2, '0')}</span>
+      <span className="mx-1.5 text-white/60">/</span>
+      <span className="text-white/80">{String(count).padStart(2, '0')}</span>
     </span>
   );
 }
@@ -409,7 +455,7 @@ function Thumbs({
             onClick={() => onPick(n)}
             aria-label={`Show photo ${n + 1}`}
             aria-current={n === index}
-            className="group/thumb relative aspect-[16/10] overflow-hidden rounded-lg bg-ink-900"
+            className="group/thumb relative aspect-[16/10] overflow-hidden rounded-lg bg-paper-300"
           >
             <Image
               src={src}
@@ -448,6 +494,7 @@ function Lightbox({
   direction,
   label,
   reduce,
+  open,
   onPaginate,
   onPick,
   onClose,
@@ -457,6 +504,8 @@ function Lightbox({
   direction: number;
   label: string;
   reduce: boolean;
+  /** Showing, as opposed to merely still in the page while it fades out. */
+  open: boolean;
   onPaginate: (dir: number) => void;
   onPick: (i: number) => void;
   onClose: () => void;
@@ -477,15 +526,24 @@ function Lightbox({
   }, []);
 
   return (
-    <motion.div
+    <div
       role="dialog"
       aria-modal="true"
       aria-label={`${label} photos`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: EASE }}
-      className="fixed inset-0 z-[200] flex flex-col bg-ink-1000/95 backdrop-blur-xl"
+      aria-hidden={open ? undefined : true}
+      /* Deliberately still dark, on an otherwise light site. A lightbox
+         exists to take everything except the photograph away, and a bright
+         chamber cannot do that — the white would sit at the same value as
+         the sky in half these pictures and eat the edges of the car. Every
+         viewer worth copying does this, and the page behind it is what
+         tells you the site is light.
+
+         The fade is a CSS animation rather than a framer one: this element's
+         removal is now driven by a timer in Gallery, and the class it is
+         given simply has to match. */
+      className={`fixed inset-0 z-[200] flex flex-col bg-ink-1000/95 backdrop-blur-xl ${
+        open ? 'animate-sheet-in' : 'pointer-events-none animate-sheet-out'
+      }`}
     >
       <div className="flex shrink-0 items-center justify-between px-5 py-4 sm:px-8">
         <p className="font-display text-lg text-white">{label}</p>
@@ -506,7 +564,6 @@ function Lightbox({
       <motion.div
         initial={{ scale: reduce ? 1 : 0.96, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: reduce ? 1 : 0.98, opacity: 0 }}
         transition={{ duration: 0.4, ease: EASE }}
         className="relative min-h-0 flex-1 overflow-hidden"
       >
@@ -543,23 +600,23 @@ function Lightbox({
           />
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
 /** No photos yet — say so plainly rather than showing a broken frame. */
 function EmptyPlate({ car }: { car: Car }) {
   return (
-    <div className="hairline relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#181c26_0%,#0b0d12_55%,#11141b_100%)]">
+    <div className="hairline relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#f8f5ec_0%,#e6dcc4_55%,#f1ead8_100%)]">
       <div
         aria-hidden
-        className="absolute -right-10 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-accent/10 blur-[90px]"
+        className="absolute -right-10 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-accent/[0.05] blur-[90px]"
       />
       <div className="relative px-8 text-center">
-        <p className="font-display text-5xl font-600 leading-none text-white/[0.14]">
+        <p className="font-display text-5xl font-600 leading-none text-ink-900/[0.13]">
           {car.model}
         </p>
-        <p className="mt-6 text-sm text-slate-500">
+        <p className="mt-6 text-sm text-stone-600">
           Photographs are being shot. Call us and we will send them on WhatsApp today.
         </p>
       </div>

@@ -12,6 +12,7 @@ export default function ScrollProgress() {
 
   return (
     <motion.div
+      data-site-chrome
       style={{ scaleX }}
       className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-accent via-accent-soft to-accent-glow"
     />

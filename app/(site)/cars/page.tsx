@@ -38,7 +38,6 @@ export default async function CarsPage() {
             ? `${cars.length} cars, each one inspected before it earned a place here. Filter down to what you actually want — the list updates as you go.`
             : 'Our floor is between shipments. Tell us what you are looking for and we will source it.'
         }
-        crumbs={[{ label: 'Home', href: '/' }, { label: 'Cars' }]}
       />
 
       {/* Browse reads its state from the URL, which needs a Suspense boundary. */}
@@ -54,13 +53,13 @@ function GridSkeleton() {
     <div className="mx-auto max-w-7xl px-6 pb-32 lg:px-10">
       <div className="grid gap-x-16 lg:grid-cols-[17rem_1fr]">
         <div className="hidden lg:block">
-          <div className="h-[520px] rounded-2xl bg-white/[0.02]" />
+          <div className="h-[520px] rounded-2xl bg-paper-300" />
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="shimmer h-[420px] rounded-2xl border border-white/[0.06] bg-ink-850/50"
+              className="shimmer h-[420px] rounded-2xl border border-line bg-paper-300"
             />
           ))}
         </div>

@@ -48,10 +48,10 @@ function Group({
     <div className="space-y-5">
       {title && (
         <div>
-          <h3 className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+          <h3 className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-600">
             {title}
           </h3>
-          {note && <p className="mt-2 text-[13px] leading-relaxed text-slate-500">{note}</p>}
+          {note && <p className="mt-2 text-[13px] leading-relaxed text-stone-600">{note}</p>}
         </div>
       )}
       {children}

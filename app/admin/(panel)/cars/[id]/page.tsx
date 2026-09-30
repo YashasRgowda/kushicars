@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
 import { getCarById } from '@/lib/cars';
 import { updateCar, deleteCar } from '@/app/admin/cars/actions';
 import CarForm from '@/components/admin/CarForm';
+import DeleteCarButton from '@/components/admin/DeleteCarButton';
+import { PageTitle } from '@/components/admin/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,36 +25,34 @@ export default async function EditCarPage({
   const action = updateCar.bind(null, id);
   const remove = deleteCar.bind(null, id);
 
+  const name = `${car.brand} ${car.model}`;
+
   return (
     <>
       <Link
         href="/admin"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-white"
+        className="group mb-10 inline-flex items-center gap-2 text-[13px] text-stone-600 transition-colors duration-300 hover:text-ink-900"
       >
-        <ArrowLeft className="h-4 w-4" /> All cars
+        <ArrowLeft
+          className="h-3.5 w-3.5 transition-transform duration-300 ease-premium group-hover:-translate-x-0.5"
+          strokeWidth={1.8}
+        />
+        All cars
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-600 text-white">
-            {car.brand} {car.model}
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            {car.year} · {car.variant || car.body}
-          </p>
-        </div>
-
-        <form action={remove}>
-          <button
-            type="submit"
-            className="flex items-center gap-2 rounded-full border border-accent/30 px-4 py-2.5 text-sm text-accent-glow transition-colors hover:bg-accent/10"
-          >
-            <Trash2 className="h-4 w-4" /> Delete
-          </button>
-        </form>
-      </div>
+      <PageTitle
+        eyebrow={car.sold ? 'Sold · not on the website' : 'On the website'}
+        title={name}
+        sub={[car.year, car.variant || car.body].filter(Boolean).join(' · ')}
+      />
 
       <CarForm action={action} car={car} submitLabel="Save changes" />
+
+      {/* Below the save bar, deliberately: the last thing on the page, and
+          the quietest thing on it. */}
+      <div className="mt-14 border-t border-line-soft pt-8">
+        <DeleteCarButton action={remove} name={name} />
+      </div>
     </>
   );
 }

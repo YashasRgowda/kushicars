@@ -62,7 +62,7 @@ export default function FilterSheet({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE }}
             onClick={onClose}
-            className="fixed inset-0 z-[90] bg-ink-1000/80 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[90] bg-ink-950/40 backdrop-blur-sm lg:hidden"
           />
 
           <motion.div
@@ -73,20 +73,20 @@ export default function FilterSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="fixed inset-x-0 bottom-0 z-[95] flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-white/10 bg-ink-900 lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-[95] flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-line bg-paper lg:hidden"
           >
             {/* Grab handle — tells the thumb this thing came from the bottom. */}
             <div className="flex shrink-0 items-center justify-between px-6 pb-4 pt-3">
               <span
                 aria-hidden
-                className="absolute left-1/2 top-3 h-1 w-10 -translate-x-1/2 rounded-full bg-white/15"
+                className="absolute left-1/2 top-3 h-1 w-10 -translate-x-1/2 rounded-full bg-line-strong"
               />
-              <h2 className="mt-3 font-display text-xl font-600 text-white">Filters</h2>
+              <h2 className="mt-3 font-display text-xl font-600 text-ink-900">Filters</h2>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close filters"
-                className="mt-3 grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-slate-300"
+                className="mt-3 grid h-9 w-9 place-items-center rounded-full bg-paper-200 text-stone-800"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -103,19 +103,19 @@ export default function FilterSheet({
               />
             </div>
 
-            <div className="shrink-0 border-t border-white/[0.08] bg-ink-900 px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
+            <div className="shrink-0 border-t border-line bg-paper px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={reset}
-                  className="rounded-full border border-white/12 px-5 py-3.5 text-sm text-slate-300"
+                  className="rounded-full border border-line px-5 py-3.5 text-sm text-stone-800"
                 >
                   Reset
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 rounded-full bg-platinum px-5 py-3.5 text-sm font-500 text-ink-950"
+                  className="flex-1 rounded-full bg-accent px-5 py-3.5 text-sm font-500 text-white"
                 >
                   Show {resultCount} {resultCount === 1 ? 'car' : 'cars'}
                 </button>

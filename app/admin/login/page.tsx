@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/auth';
 import LoginForm from '@/components/admin/LoginForm';
+import Wordmark from '@/components/Wordmark';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,31 +20,28 @@ export default async function LoginPage({
   if (user) redirect('/admin');
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-ink-950 px-6">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-accent text-white shadow-glow">
-            <span className="font-display text-base font-700 leading-none tracking-tight">
-              K
-            </span>
-          </span>
-          <span className="font-display text-xl font-600 tracking-wide text-white">
-            Kushi Cars<span className="text-accent">.</span>
-          </span>
-        </div>
+    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-paper-100 px-6 py-16">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-accent/[0.035] blur-[150px]"
+      />
+      <div className="noise pointer-events-none absolute inset-0" />
 
-        <h1 className="font-display text-3xl font-600 leading-tight text-white">
+      <div className="relative w-full max-w-[22rem]">
+        <Wordmark variant="full" size="xl" />
+
+        <h1 className="mt-12 font-display text-[2.4rem] font-600 leading-[1.05] text-ink-900">
           Sign in
         </h1>
-        <p className="mt-2 text-sm text-slate-400">
-          Manage your cars and contact details.
+        <p className="mt-4 text-[15px] leading-relaxed text-stone-700">
+          Your cars, your photos and your contact details — all in one place.
         </p>
 
         <LoginForm next={next ?? '/admin'} />
 
         <Link
           href="/"
-          className="mt-8 block text-center text-xs text-slate-500 transition-colors hover:text-slate-300"
+          className="mt-10 block text-center text-[13px] text-muted transition-colors duration-300 hover:text-stone-800"
         >
           ← Back to the website
         </Link>

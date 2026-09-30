@@ -19,11 +19,11 @@ export default function LatestArrivals({ cars }: { cars: Car[] }) {
   return (
     <section
       id="inventory"
-      className="relative scroll-mt-20 overflow-hidden py-32 lg:py-44"
+      className="section-y relative scroll-mt-20 overflow-hidden"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-24 h-[380px] w-[760px] max-w-full -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[140px]"
+        className="pointer-events-none absolute left-1/2 top-24 h-[380px] w-[760px] max-w-full -translate-x-1/2 rounded-full bg-accent/[0.035] blur-[140px]"
       />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
@@ -33,14 +33,14 @@ export default function LatestArrivals({ cars }: { cars: Car[] }) {
             <SplitText
               as="h2"
               text="Find your next car"
-              className="mt-7 block max-w-2xl font-display text-display-sm font-600 text-white"
+              className="mt-7 block max-w-2xl font-display text-display-sm font-600 text-ink-900"
             />
           </div>
 
           <Reveal delay={0.1}>
             <Link
               href="/cars"
-              className="group flex items-center gap-2.5 rounded-full border border-white/12 px-6 py-3.5 text-sm text-slate-200 transition-colors duration-300 hover:border-white/30 hover:text-white"
+              className="group flex items-center gap-2.5 rounded-full border border-line px-6 py-3.5 text-sm text-stone-800 transition-colors duration-300 hover:border-line-strong hover:text-ink-900"
             >
               See all {cars.length} cars
               <ArrowRight
@@ -62,12 +62,12 @@ export default function LatestArrivals({ cars }: { cars: Car[] }) {
             <div className="mt-14 text-center">
               <Link
                 href="/cars"
-                className="inline-flex items-center gap-2.5 rounded-full bg-platinum px-8 py-4 text-sm font-500 text-ink-950 shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.03]"
+                className="inline-flex items-center gap-2.5 rounded-full bg-accent px-8 py-4 text-sm font-500 text-white shadow-lift transition-transform duration-300 ease-premium hover:scale-[1.03]"
               >
                 Browse the full collection
                 <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
-              <p className="mt-5 text-[13px] text-slate-500">
+              <p className="mt-5 text-[13px] text-stone-600">
                 Filter by budget, brand, body style, fuel and ownership.
               </p>
             </div>

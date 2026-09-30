@@ -70,7 +70,7 @@ export default function SuccessHandoff({
         <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
         Send the details on WhatsApp
       </a>
-      <p className="mt-4 max-w-md text-[13px] leading-relaxed text-slate-500">
+      <p className="mt-4 max-w-md text-[13px] leading-relaxed text-stone-600">
         Optional, but it is the fastest route — the showroom sees it
         immediately and can reply without waiting for someone to check the
         system.

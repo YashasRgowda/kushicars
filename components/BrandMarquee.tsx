@@ -30,11 +30,11 @@ export default function BrandMarquee({ brands }: { brands: Brand[] }) {
     <section
       ref={ref}
       aria-label="Brands in stock"
-      className="scene relative overflow-hidden border-y border-white/[0.07] bg-ink-1000 py-16 lg:py-20"
+      className="band-y scene relative overflow-hidden border-y border-line bg-paper"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[900px] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.09] blur-[120px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[900px] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.05] blur-[120px]"
       />
 
       <motion.div
@@ -73,15 +73,27 @@ function Row({
             key={`${b.name}-${i}`}
             // Lands on the collection already narrowed to that brand.
             href={`/cars?brand=${encodeURIComponent(b.name)}`}
-            tabIndex={i < items.length / 2 ? 0 : -1}
-            aria-hidden={i >= items.length / 2}
+            /* Two things are duplicated here. The second half of each row
+               is the copy that makes the marquee loop seamlessly, and the
+               whole muted row is a second pass of the same brands purely
+               for depth — every link in it already exists, readably, in the
+               row above. Both are hidden from assistive tech and taken out
+               of the tab order so the same six destinations are not
+               announced four times over. */
+            tabIndex={!muted && i < items.length / 2 ? 0 : -1}
+            aria-hidden={muted || i >= items.length / 2}
             className="group flex shrink-0 items-center gap-8 px-8"
           >
             <span
               className={`font-display text-3xl font-500 tracking-tight transition-colors duration-500 sm:text-4xl lg:text-5xl ${
+                /* These are links to a pre-filtered collection, not
+                   wallpaper, so the front row has to clear 3:1 for large
+                   text — it was sitting at 2.5:1 and the back row at 1.3:1,
+                   which is invisible. The two-row depth is kept, just moved
+                   up the scale: front 0.48, back 0.30. */
                 muted
-                  ? 'text-white/[0.13] group-hover:text-white/40'
-                  : 'text-white/35 group-hover:text-white'
+                  ? 'text-ink-900/[0.30] group-hover:text-ink-900/60'
+                  : 'text-ink-900/[0.48] group-hover:text-ink-900'
               }`}
             >
               {b.name}

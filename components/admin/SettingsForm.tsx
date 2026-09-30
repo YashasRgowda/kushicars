@@ -1,10 +1,18 @@
 'use client';
 
 import { useActionState } from 'react';
-import { Loader2, Save, Check } from 'lucide-react';
+import { AlertCircle, Check, Loader2, Save } from 'lucide-react';
 import { updateSettings, type SettingsState } from '@/app/admin/settings/actions';
+import { Section } from './ui';
+import { TextArea, TextField } from '@/components/form/fields';
 import type { Settings } from '@/lib/types';
 
+/**
+ * The details the owner might change on a Tuesday afternoon.
+ *
+ * Grouped the way he would say them out loud — who we are, how to reach us,
+ * where we are — rather than in the order the database happens to store them.
+ */
 export default function SettingsForm({ settings }: { settings: Settings }) {
   const [state, formAction, pending] = useActionState<SettingsState, FormData>(
     updateSettings,
@@ -12,125 +20,123 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
   );
 
   return (
-    <form action={formAction} className="mt-8 max-w-2xl space-y-6">
-      <Field label="Business name" required>
-        <Input name="business_name" defaultValue={settings.businessName} required />
-      </Field>
+    <form action={formAction} className="mt-16 space-y-12">
+      <Section title="The business" note="The name shown on the door, and in the browser tab.">
+        <TextField
+          label="Business name"
+          name="business_name"
+          defaultValue={settings.businessName}
+          required
+          className="sm:max-w-sm"
+        />
+      </Section>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Phone" hint="Shown in the header and footer">
-          <Input
+      <Section
+        title="Reaching you"
+        note="The phone number sits in the header of every page. The WhatsApp number is what every green button opens."
+      >
+        <div className="grid gap-5 sm:grid-cols-2">
+          <TextField
+            label="Phone"
             name="phone"
             type="tel"
             defaultValue={settings.phone ?? ''}
-            placeholder="+91 98765 43210"
+            placeholder="+91 96863 35559"
+            hint="Written exactly as you want it read."
           />
-        </Field>
-        <Field label="WhatsApp" hint="Number only, no spaces — e.g. 919876543210">
-          <Input
+          <TextField
+            label="WhatsApp"
             name="whatsapp"
+            type="tel"
             defaultValue={settings.whatsapp ?? ''}
-            placeholder="919876543210"
+            placeholder="+91 96863 35559"
+            hint="Usually the same number. Spaces and +91 are fine."
           />
-        </Field>
-      </div>
-
-      <Field label="Email">
-        <Input
-          name="email"
-          type="email"
-          defaultValue={settings.email ?? ''}
-          placeholder="hello@bmcars.in"
-        />
-      </Field>
-
-      <Field label="Address">
-        <textarea
-          name="address"
-          rows={3}
-          defaultValue={settings.address ?? ''}
-          className={fieldCls}
-        />
-      </Field>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Opening hours" hint="e.g. Mon–Sat, 9am – 8pm">
-          <Input
-            name="hours"
-            defaultValue={settings.hours ?? ''}
-            placeholder="Mon–Sat, 9am – 8pm"
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            optional
+            defaultValue={settings.email ?? ''}
+            placeholder="kushicars@gmail.com"
+            hint="Leave it empty and the website simply will not mention email."
+            className="sm:col-span-2 sm:max-w-sm"
           />
-        </Field>
-        <Field label="Google Maps link" hint="Optional — used by the Directions button">
-          <Input
-            name="map_url"
-            type="url"
-            defaultValue={settings.mapUrl ?? ''}
-            placeholder="https://maps.app.goo.gl/…"
-          />
-        </Field>
-      </div>
+        </div>
+      </Section>
 
-      {state.error && (
-        <p
-          role="alert"
-          className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent-glow"
-        >
-          {state.error}
-        </p>
-      )}
-
-      {state.ok && !pending && (
-        <p className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
-          <Check className="h-4 w-4" /> Saved. The website is updated.
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={pending}
-        className="flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-500 text-white shadow-glow transition-transform disabled:opacity-60 enabled:hover:scale-[1.03]"
+      <Section
+        title="Finding you"
+        note="Used by the contact page, the map and the Directions button."
       >
-        {pending ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Saving…
-          </>
-        ) : (
-          <>
-            <Save className="h-4 w-4" /> Save details
-          </>
+        <div className="space-y-5">
+          <TextArea
+            label="Address"
+            name="address"
+            rows={3}
+            defaultValue={settings.address ?? ''}
+            placeholder="19/1, Near BDA Complex, Marilingappa Extension, 2nd Stage, Nagarbhavi, Bengaluru, Karnataka 560072"
+          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <TextField
+              label="Opening hours"
+              name="hours"
+              defaultValue={settings.hours ?? ''}
+              placeholder="Mon–Sat 9:30 am – 8:00 pm"
+              hint="One line, in your own words."
+            />
+            <TextField
+              label="Google Maps link"
+              name="map_url"
+              type="url"
+              optional
+              defaultValue={settings.mapUrl ?? ''}
+              placeholder="https://maps.app.goo.gl/…"
+              hint="From Google Maps → Share. Optional."
+            />
+          </div>
+        </div>
+      </Section>
+
+      {/* ---------------- Save ---------------- */}
+      <div className="sticky bottom-0 z-30 -mx-6 border-t border-line bg-paper-100/90 px-6 pb-6 pt-5 backdrop-blur-xl">
+        {state.error && (
+          <p
+            role="alert"
+            className="mb-4 flex items-start gap-2.5 rounded-xl border border-danger-line bg-danger-wash px-4 py-3 text-[13px] leading-relaxed text-danger-ink"
+          >
+            <AlertCircle className="mt-px h-4 w-4 shrink-0" strokeWidth={1.8} />
+            {state.error}
+          </p>
         )}
-      </button>
+
+        <div className="flex flex-wrap items-center gap-4">
+          <button
+            type="submit"
+            disabled={pending}
+            className="flex items-center gap-2.5 rounded-full bg-accent px-7 py-3.5 text-sm font-500 text-white shadow-lift-accent transition-transform duration-300 ease-premium disabled:cursor-wait disabled:opacity-60 enabled:hover:scale-[1.03]"
+          >
+            {pending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+                Saving…
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" strokeWidth={1.8} />
+                Save details
+              </>
+            )}
+          </button>
+
+          {state.ok && !pending && (
+            <p className="flex items-center gap-2 text-[13px] text-accent-soft">
+              <Check className="h-4 w-4" strokeWidth={2} />
+              Saved. The website is already showing it.
+            </p>
+          )}
+        </div>
+      </div>
     </form>
-  );
-}
-
-const fieldCls =
-  'w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors placeholder:text-slate-600 focus:border-accent/60 focus-visible:ring-2 focus-visible:ring-accent/40';
-
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={fieldCls} />;
-}
-
-function Field({
-  label,
-  hint,
-  required,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm text-slate-300">
-        {label}
-        {required && <span className="ml-1 text-accent">*</span>}
-      </span>
-      {children}
-      {hint && <span className="mt-1 block text-xs text-slate-500">{hint}</span>}
-    </label>
   );
 }

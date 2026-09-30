@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Preloader from '@/components/Preloader';
 import Hero from '@/components/Hero';
 import BrandMarquee from '@/components/BrandMarquee';
@@ -24,35 +24,45 @@ import type { Brand, Car } from '@/lib/types';
 export default function HomeClient({
   cars,
   brands,
+  hero,
 }: {
   cars: Car[];
   brands: Brand[];
+  /** The car in the feature panel — chosen in the admin panel, worked out
+   *  on the server by pickShowcase(). */
+  hero: Car | null;
 }) {
   const [ready, setReady] = useState(false);
 
-  // The showcase leads with the flagship: the dearest car the owner has
-  // tagged Featured, falling back to the dearest car on the floor. Taking
-  // simply the FIRST tagged car meant showroom order decided which car got
-  // the set piece, so a ₹7 lakh hatchback could outrank a Fortuner.
-  const hero =
-    [...cars]
-      .filter((c) => c.image)
-      .sort(
-        (a, b) =>
-          Number(b.tag === 'Featured') - Number(a.tag === 'Featured') ||
-          b.price - a.price,
-      )[0] ?? cars[0];
+  // Clicking the mark while already on this page asks the hero to open
+  // again — see Navbar. Bumping this remounts only the hero's type block,
+  // so the words replay without the film restarting under them.
+  const [replay, setReplay] = useState(0);
+  useEffect(() => {
+    const again = () => setReplay((n) => n + 1);
+    window.addEventListener('kushi:replay-hero', again);
+    return () => window.removeEventListener('kushi:replay-hero', again);
+  }, []);
 
   return (
     <>
       <Preloader onDone={() => setReady(true)} />
-      <Hero ready={ready} carCount={cars.length} brandCount={brands.length} />
+      <Hero
+        ready={ready}
+        replayKey={replay}
+        carCount={cars.length}
+        brandCount={brands.length}
+      />
       <BrandMarquee brands={brands} />
+      {/* The monthly figure comes before the cars on purpose: almost everyone
+          here buys on finance, so "what will it cost me a month" is the
+          question being asked while they scroll, and the cars underneath are
+          then read against an answer they already have. */}
+      <FinanceCalculator cars={cars} />
       {hero && <Showcase car={hero} />}
       <LatestArrivals cars={cars} />
       <SellBand />
       <Experience />
-      <FinanceCalculator cars={cars} />
       <Testimonials />
       <FAQ />
     </>
