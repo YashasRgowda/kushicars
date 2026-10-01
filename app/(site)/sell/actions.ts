@@ -3,8 +3,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { makeRef } from '@/lib/ref';
-import { formatRtoCode, monthToDate, normaliseMobile } from '@/lib/validation';
-import { emptySellForm, validateAll, type SellFormValues } from '@/lib/sell';
+import { monthToDate, normaliseMobile, normaliseRegNumber } from '@/lib/validation';
+import { emptySellForm, slotText, validateAll, type SellFormValues } from '@/lib/sell';
 
 /**
  * Receives a completed sell request.
@@ -33,7 +33,7 @@ export async function submitSellRequest(
   // Honeypot — invisible to people, irresistible to bots. We answer as though
   // it worked rather than telling the bot it was caught.
   if (String(formData.get('website') ?? '').trim() !== '') {
-    redirect(`/sell/success?ref=${makeRef()}`);
+    redirect('/sell/success');
   }
 
   let v: SellFormValues;
@@ -64,41 +64,41 @@ export async function submitSellRequest(
     model: v.model.trim(),
     variant: v.variant.trim(),
     year_mfg: Number(v.yearMfg),
-    year_reg: v.yearReg ? Number(v.yearReg) : null,
     fuel: v.fuel,
     transmission: v.transmission,
-    body: v.body || null,
 
     km_driven: Number(v.kmDriven),
     owners: Number(v.owners),
-    rto_code: v.rtoCode ? formatRtoCode(v.rtoCode) : null,
-    reg_state: v.regState.trim() || null,
+    // The whole plate, normalised to KA05MH1234. It lives in rto_code —
+    // the column that used to hold just the district code — because the
+    // check there allows 12 characters and a plate never exceeds 11, so
+    // widening the form did not need a migration. The admin panel reads it
+    // back as "Car number".
+    rto_code: normaliseRegNumber(v.regNumber),
 
-    accident_history: v.accidentHistory,
-    service_history: v.serviceHistory,
     known_issues: v.knownIssues.trim() || null,
 
+    // accident_history, service_history, keys_count and pending_challans are
+    // no longer asked — the inspection establishes all four better than a
+    // seller typing on a phone does. Each is NOT NULL with a default in
+    // supabase/002_leads.sql, so leaving them out is what fills them in.
     insurance_type: v.insuranceType,
     insurance_valid_till: monthToDate(v.insuranceValidTill),
     rc_status: v.rcStatus,
     loan_status: v.loanStatus,
-    keys_count: Number(v.keysCount),
-    pending_challans: v.pendingChallans,
     // Only meaningful on a CNG car; null everywhere else keeps the column honest.
     cng_endorsed_on_rc: v.fuel === 'CNG' ? v.cngEndorsedOnRc : null,
 
     expected_price: v.expectedPrice ? Number(v.expectedPrice) : null,
-    reason_for_selling: v.reasonForSelling.trim() || null,
 
     name: v.name.trim(),
     phone,
     whatsapp_same: v.whatsappSame,
     whatsapp: whatsapp || null,
-    email: v.email.trim() || null,
     locality: v.locality.trim() || null,
     pincode: v.pincode.trim() || null,
 
-    preferred_slot: v.preferredSlot || null,
+    preferred_slot: slotText(v.slot, v.slotDays) || null,
     photos: v.photos,
   });
 
@@ -110,5 +110,8 @@ export async function submitSellRequest(
     };
   }
 
-  redirect(`/sell/success?ref=${ref}`);
+  // The reference still goes in the row — it is how the owner refers to a
+  // lead — but the seller is not shown one. By the time they land here the
+  // details are already open in their WhatsApp.
+  redirect('/sell/success');
 }

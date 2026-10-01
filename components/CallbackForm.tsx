@@ -62,7 +62,7 @@ export default function CallbackForm({ settings }: { settings: Settings }) {
       <Honeypot />
       <input type="hidden" name="kind" value="callback" />
 
-      <TextField label="Your name" name="name" autoComplete="name" required placeholder="Ravi Kumar" />
+      <TextField label="Your name" name="name" autoComplete="name" required placeholder="Enter your name" />
       <TextField
         label="Phone number"
         name="phone"
@@ -72,13 +72,12 @@ export default function CallbackForm({ settings }: { settings: Settings }) {
         required
         prefix="+91"
         maxLength={10}
-        placeholder="98450 00000"
+        placeholder="Enter your number"
       />
       <TextField
         label="What are you looking for?"
         name="message"
-        optional
-        placeholder="Automatic SUV under ₹15 lakh"
+        placeholder="What car are you looking for?"
       />
 
       {state.error && <p className="text-[13px] text-danger-ink">{state.error}</p>}

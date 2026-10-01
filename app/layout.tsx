@@ -27,10 +27,17 @@ export const metadata: Metadata = {
     'used car finance Bengaluru',
     'Kushi Cars',
   ],
-  // The car is a 3.7:1 profile, so it fights a square. Below about 48px the
-  // gold trim disappears and only mass survives — those sizes get a flat
-  // cream silhouette of the same car, and the full artwork takes over once
-  // there is room for it.
+  // The car is a 3.7:1 profile, so it fights a square: span the tile and it
+  // is only about a quarter as tall as it is wide. Every size is therefore
+  // the same render — the real artwork, gold trim and all, at 96% of the
+  // tile — rather than a simplified mark below some threshold. An earlier
+  // set flattened the small sizes to a cream silhouette on the theory that
+  // the trim could not survive the downsample; what actually survived was
+  // an unreadable blob, while the gold is the one thing that still reads at
+  // 32px, because it is what separates the car from the ground it sits on.
+  //
+  // 32 is the size that matters most: a retina tab slot is 16 CSS pixels
+  // and two device pixels to each of them.
   //
   // app/favicon.ico used to sit alongside this — the Next.js starter
   // triangle, committed on day one. The app-router icon convention OUTRANKS

@@ -9,6 +9,14 @@ import { createClient } from '@/lib/supabase/server';
  * and nothing else, so a lead is invisible to the public once it is saved.
  */
 
+/**
+ * Note what is NOT here. accident_history, service_history, keys_count and
+ * pending_challans are still columns — they are NOT NULL with defaults — but
+ * the form stopped asking them, so every new row carries the default rather
+ * than an answer. Reading those back into the panel would have it state
+ * "Never been in an accident" about a car nobody was asked about, which is
+ * worse than not showing the field at all.
+ */
 export interface SellLead {
   id: string;
   ref: string;
@@ -18,15 +26,14 @@ export interface SellLead {
   car: string;
   fuel: string;
   transmission: string;
+  /** Nullable: older leads, taken before the form asked, have none. */
   body: string | null;
   kmDriven: number;
   owners: number;
-  rtoCode: string | null;
+  /** The whole plate. Stored in rto_code — see app/(site)/sell/actions.ts. */
+  regNumber: string | null;
   regState: string | null;
 
-  // condition
-  accidentHistory: string;
-  serviceHistory: string;
   knownIssues: string | null;
 
   // paperwork
@@ -34,8 +41,6 @@ export interface SellLead {
   insuranceValidTill: string | null;
   rcStatus: string;
   loanStatus: string;
-  keysCount: number;
-  pendingChallans: boolean;
 
   // commercial
   expectedPrice: number | null;
@@ -114,17 +119,13 @@ export async function getSellLeads(): Promise<SellLead[]> {
       body: r.body,
       kmDriven: r.km_driven,
       owners: r.owners,
-      rtoCode: r.rto_code,
+      regNumber: r.rto_code,
       regState: r.reg_state,
-      accidentHistory: r.accident_history,
-      serviceHistory: r.service_history,
       knownIssues: r.known_issues,
       insuranceType: r.insurance_type,
       insuranceValidTill: r.insurance_valid_till,
       rcStatus: r.rc_status,
       loanStatus: r.loan_status,
-      keysCount: r.keys_count,
-      pendingChallans: r.pending_challans,
       expectedPrice: r.expected_price === null ? null : Number(r.expected_price),
       reasonForSelling: r.reason_for_selling,
       name: r.name,

@@ -17,8 +17,8 @@ const steps = [
   {
     icon: ClipboardCheck,
     title: 'Tell us about the car',
-    body: 'Four short screens. The paperwork questions matter more than they look — they are what let us quote accurately instead of low.',
-    meta: 'About 3 minutes',
+    body: 'Three short screens — who you are, what the car is, and the papers. Nothing we could work out ourselves at the inspection.',
+    meta: 'About 2 minutes',
   },
   {
     icon: HandCoins,
@@ -57,8 +57,20 @@ export default function SellPage() {
         lede="We buy as much as we sell. Tell us what you have and we will inspect it free, make you a firm offer the same day, and handle the loan closure and RC transfer ourselves."
       />
 
-      {/* ---------------- How it works ---------------- */}
-      <section className="mx-auto max-w-7xl px-6 pb-8 lg:px-10">
+      {/* ---------------- The form ----------------
+
+           First, not last. Somebody who followed a "sell your car" link has
+           already decided to find out what their car is worth; making them
+           read four explanatory tiles before they can start is a toll on the
+           one action this page exists for. What happens next is worth
+           saying — it just belongs underneath, for whoever scrolls past the
+           form rather than filling it in. */}
+      <section className="mx-auto max-w-3xl px-6 pb-16 pt-12 lg:pt-16">
+        <SellWizard />
+      </section>
+
+      {/* ---------------- What happens next ---------------- */}
+      <section className="section-y mx-auto max-w-7xl px-6 lg:px-10">
         <div className="grid gap-x-8 gap-y-12 border-t border-line-soft pt-14 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08}>
@@ -82,11 +94,6 @@ export default function SellPage() {
             </Reveal>
           ))}
         </div>
-      </section>
-
-      {/* ---------------- The form ---------------- */}
-      <section className="mx-auto max-w-3xl px-6 pb-32 pt-24 lg:pb-44 lg:pt-32">
-        <SellWizard />
       </section>
     </>
   );

@@ -21,7 +21,7 @@ export default async function EnquiriesPage() {
       <PageTitle
         eyebrow="From the website"
         title="Enquiries"
-        sub="Everyone who has written in. Tap a name to see everything they told us, then message them in one go."
+        sub="Two lists: people asking about a car, and people offering us theirs. Tap a name to see everything they told us, then call or message them."
       />
 
       <LeadList

@@ -93,6 +93,14 @@ export default {
            until the WORST ground on the site clears 4.6. */
         muted: '#655f5b',
 
+        /* Placeholder text, and only that.
+           It used to borrow `muted`, which is the small-print tier and sits
+           at 6.3:1 on a white field — body-text contrast. Next to a real
+           value at 17:1 that is near enough to read as one, so a form full
+           of examples looked like a form somebody had already filled in.
+           This is 3.3:1: plainly lighter than an answer, still legible. */
+        placeholder: '#948d86',
+
         // The logo's ivory as a flat colour, for the few things that sit on ink.
         ivory: '#f1e8d3',
       },

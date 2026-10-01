@@ -17,11 +17,14 @@ import {
   type SellErrors,
   type SellFormValues,
 } from '@/lib/sell';
+import { BUSINESS } from '@/lib/business';
+import { buildSellMessage } from '@/lib/sell-message';
+import { waTo } from '@/lib/whatsapp';
 import { submitSellRequest, type SellState } from '@/app/(site)/sell/actions';
 import { EASE } from '@/components/ui/motion';
 import { Honeypot } from '@/components/form/fields';
 import ProgressRail from './ProgressRail';
-import { StepCar, StepCondition, StepContact, StepPapers } from './Steps';
+import { StepCar, StepPrice, StepYou } from './Steps';
 import {
   completeDraft,
   getServerSnapshot,
@@ -42,6 +45,29 @@ import {
  * Validation runs per step on the way forward only. Validating as someone
  * types turns a form into an argument.
  */
+/**
+ * Opens WhatsApp in a new tab, the way least likely to be swallowed.
+ *
+ * This was `window.open(href, '_blank', 'noopener,noreferrer')`. Passing a
+ * features string — any features string — makes Chrome treat the call as a
+ * request for a POPUP WINDOW rather than a tab, and a popup is exactly what
+ * the blocker is looking for. It was being blocked silently: the lead saved,
+ * the seller was told it had gone, and nothing reached the phone.
+ *
+ * A link click is an ordinary navigation and is far more permissive. It can
+ * still be refused — which is why the confirmation page carries a button
+ * that does the same thing, and why nothing depends on this working.
+ */
+function openWhatsApp(href: string) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 export default function SellWizard() {
   // The answers are derived, not stored: whatever was left in the draft,
   // overlaid with whatever has been changed since. That keeps the restore
@@ -130,9 +156,30 @@ export default function SellWizard() {
       return false;
     }
     setErrors({});
-    // The success page builds the WhatsApp summary from this. It never
-    // travels over the wire a second time.
+
+    /**
+     * One press does both things: the row is saved by the action below, and
+     * the same details open in WhatsApp on their way to whoever values cars.
+     *
+     * The window is opened HERE, inside the click, rather than on the page
+     * we land on afterwards. A browser only allows a new tab while it is
+     * still handling a real gesture; opened a moment later, from an effect
+     * on the next page, it is a pop-up and gets blocked. It opens only once
+     * validation has passed, so a half-finished form never reaches anyone.
+     *
+     * The lead is in the database either way. If the tab is blocked, or
+     * they close WhatsApp without sending, nothing is lost — it is already
+     * in the panel, photographs and all.
+     */
+    // The confirmation page rebuilds the same message for its own button.
     completeDraft(payload);
+
+    const href = waTo(
+      BUSINESS.sellLeadsWhatsapp,
+      buildSellMessage(v, null, BUSINESS.name),
+    );
+    if (href) openWhatsApp(href);
+
     return true;
   };
 
@@ -154,6 +201,11 @@ export default function SellWizard() {
       <form
         ref={formRef}
         action={formAction}
+        /* The fields carry `required` so each one is marked with an asterisk
+           and announced as required. The browser's own validation pass would
+           then fire ahead of ours and say it in its own words, in a bubble
+           that does not match anything else on the page. */
+        noValidate
         onSubmit={(e) => {
           if (!submit()) e.preventDefault();
         }}
@@ -185,10 +237,9 @@ export default function SellWizard() {
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.4, ease: EASE }}
             >
-              {step === 1 && <StepCar {...stepProps} />}
-              {step === 2 && <StepCondition {...stepProps} />}
-              {step === 3 && <StepPapers {...stepProps} />}
-              {step === 4 && <StepContact {...stepProps} />}
+              {step === 1 && <StepYou {...stepProps} />}
+              {step === 2 && <StepCar {...stepProps} />}
+              {step === 3 && <StepPrice {...stepProps} />}
             </motion.div>
           </AnimatePresence>
 

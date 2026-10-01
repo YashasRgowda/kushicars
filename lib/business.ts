@@ -13,6 +13,19 @@ export const BUSINESS = {
   legalName: 'Kushi Cars',
   tagline: 'Pre-owned cars, honestly sold.',
 
+  /**
+   * Where a sell-your-car request is sent on WhatsApp.
+   *
+   * Deliberately NOT the showroom number in settings. That one is the
+   * public line printed in the navbar and on every buyer-facing button;
+   * this is the phone whoever values cars actually carries, and the two are
+   * not the same person. Buyer enquiries still go to the settings number.
+   *
+   * Editing this is a code change on purpose — it is not a detail the panel
+   * should let anybody change by accident.
+   */
+  sellLeadsWhatsapp: '9844788181',
+
   /** Shown wherever we cite Google. Keep in step with the live profile. */
   rating: 4.8,
   reviewCount: 44,

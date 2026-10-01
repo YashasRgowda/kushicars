@@ -6,17 +6,10 @@ import { ChevronDown, MessageCircle, Phone, Trash2 } from 'lucide-react';
 import type { BuyerLead, SellLead } from '@/lib/leads';
 import type { Settings } from '@/lib/types';
 import { formatNumber, formatPrice } from '@/lib/format';
-import { formatMonth } from '@/lib/validation';
-import {
-  accidentLabel,
-  insuranceLabel,
-  loanLabel,
-  rcLabel,
-  serviceLabel,
-} from '@/lib/sell';
+import { formatMonth, formatRegNumber } from '@/lib/validation';
+import { insuranceLabel, loanLabel, rcLabel } from '@/lib/sell';
 import { messages, telHref, waTo } from '@/lib/whatsapp';
 import { EASE } from '@/components/ui/motion';
-import { Rule } from './ui';
 
 /**
  * Who has written in.
@@ -28,6 +21,8 @@ import { Rule } from './ui';
  * Two buttons, and they are the two things he ever does: message them, or
  * get rid of it. No statuses, no stages, no pipeline.
  */
+type Tab = 'buying' | 'selling';
+
 export default function LeadList({
   sellers,
   buyers,
@@ -41,55 +36,102 @@ export default function LeadList({
   onDeleteSeller: (id: string) => Promise<void>;
   onDeleteBuyer: (id: string) => Promise<void>;
 }) {
+  /**
+   * Two kinds of enquiry, and they are not the same job.
+   *
+   * Somebody buying wants a call about a car on the floor; somebody selling
+   * wants an inspection booked. They used to sit in one scroll, one list
+   * under the other, which meant the owner read past every seller to reach
+   * the buyers. Splitting them is what makes this a work queue rather than
+   * a feed.
+   *
+   * Buying opens first — it is the one with a car waiting on an answer.
+   */
+  const [tab, setTab] = useState<Tab>(buyers.length === 0 && sellers.length > 0 ? 'selling' : 'buying');
+
   if (sellers.length === 0 && buyers.length === 0) {
     return (
       <div className="mt-12 rounded-3xl border border-dashed border-line px-8 py-20 text-center">
-        <p className="font-display text-2xl font-600 text-ink-900">
-          Nothing yet
-        </p>
+        <p className="font-display text-2xl font-600 text-ink-900">Nothing yet</p>
         <p className="mx-auto mt-3 max-w-sm text-pretty text-[15px] leading-relaxed text-stone-700">
-          When somebody fills in a form on the website — selling their car,
-          asking about one, or requesting a call — it lands here.
+          When somebody fills in a form on the website — asking about a car,
+          or selling theirs — it lands here.
         </p>
       </div>
     );
   }
 
+  const tabs: { id: Tab; label: string; count: number }[] = [
+    { id: 'buying', label: 'Buying a car', count: buyers.length },
+    { id: 'selling', label: 'Selling their car', count: sellers.length },
+  ];
+
   return (
-    <div className="mt-12 space-y-14">
-      {sellers.length > 0 && (
-        <section>
-          <Rule>Selling their car · {sellers.length}</Rule>
-          <ul className="mt-6 space-y-2.5">
+    <div className="mt-10">
+      <div
+        role="tablist"
+        aria-label="Enquiry type"
+        className="inline-flex rounded-full border border-line bg-paper-200 p-1"
+      >
+        {tabs.map((t) => {
+          const active = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              type="button"
+              aria-selected={active}
+              onClick={() => setTab(t.id)}
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-colors duration-300 sm:px-5 ${
+                active ? 'bg-accent text-white shadow-card' : 'text-stone-700 hover:text-ink-900'
+              }`}
+            >
+              {t.label}
+              <span
+                className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 font-mono text-[10px] tabular-nums ${
+                  active ? 'bg-white/20 text-white' : 'bg-paper text-stone-700'
+                }`}
+              >
+                {t.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-8">
+        {tab === 'buying' ? (
+          buyers.length === 0 ? (
+            <EmptyTab what="No one has asked about a car yet." />
+          ) : (
+            <ul className="space-y-2.5">
+              {buyers.map((lead) => (
+                <li key={lead.id}>
+                  <BuyerRow lead={lead} settings={settings} onDelete={onDeleteBuyer} />
+                </li>
+              ))}
+            </ul>
+          )
+        ) : sellers.length === 0 ? (
+          <EmptyTab what="Nobody has offered us a car yet." />
+        ) : (
+          <ul className="space-y-2.5">
             {sellers.map((lead) => (
               <li key={lead.id}>
-                <SellerRow
-                  lead={lead}
-                  settings={settings}
-                  onDelete={onDeleteSeller}
-                />
+                <SellerRow lead={lead} settings={settings} onDelete={onDeleteSeller} />
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </div>
+    </div>
+  );
+}
 
-      {buyers.length > 0 && (
-        <section>
-          <Rule>Buyers · {buyers.length}</Rule>
-          <ul className="mt-6 space-y-2.5">
-            {buyers.map((lead) => (
-              <li key={lead.id}>
-                <BuyerRow
-                  lead={lead}
-                  settings={settings}
-                  onDelete={onDeleteBuyer}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+function EmptyTab({ what }: { what: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-line px-8 py-14 text-center">
+      <p className="text-[15px] text-stone-700">{what}</p>
     </div>
   );
 }
@@ -286,10 +328,8 @@ function SellerRow({
           ['Fuel', lead.fuel],
           ['Gearbox', lead.transmission],
           ['Body', lead.body],
-          ['Registration', lead.rtoCode],
+          ['Car number', lead.regNumber ? formatRegNumber(lead.regNumber) : null],
           ['Registered in', lead.regState],
-          ['Accident history', accidentLabel(lead.accidentHistory)],
-          ['Serviced at', serviceLabel(lead.serviceHistory)],
           [
             'Insurance',
             lead.insuranceValidTill
@@ -300,8 +340,6 @@ function SellerRow({
           ],
           ['RC', rcLabel(lead.rcStatus)],
           ['Loan', loanLabel(lead.loanStatus)],
-          ['Keys', String(lead.keysCount)],
-          ['Challans pending', lead.pendingChallans ? 'Yes' : null],
           [
             'Wants',
             lead.expectedPrice ? formatPrice(lead.expectedPrice) : null,

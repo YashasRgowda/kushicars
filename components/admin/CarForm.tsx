@@ -194,7 +194,6 @@ export default function CarForm({
               <TextField
                 label="Variant"
                 name="variant"
-                optional
                 defaultValue={car?.variant}
                 placeholder="ZXi+"
                 hint="On the boot lid, or in the RC."
@@ -256,7 +255,6 @@ export default function CarForm({
               <TextField
                 label="Mileage"
                 name="mileage"
-                optional
                 type="number"
                 step="0.1"
                 min={0}
@@ -268,7 +266,6 @@ export default function CarForm({
               <TextField
                 label="Registration"
                 name="registration"
-                optional
                 defaultValue={car?.registration ?? ''}
                 placeholder="KA-03"
                 hint="The RTO code from the number plate."

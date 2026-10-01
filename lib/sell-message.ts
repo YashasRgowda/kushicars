@@ -1,11 +1,10 @@
 import { formatNumber, formatPrice } from '@/lib/format';
-import { formatMonth, formatRtoCode } from '@/lib/validation';
+import { formatMonth, formatRegNumber } from '@/lib/validation';
 import {
-  accidentLabel,
   insuranceLabel,
   loanLabel,
   rcLabel,
-  serviceLabel,
+  slotText,
   type SellFormValues,
 } from '@/lib/sell';
 
@@ -19,7 +18,7 @@ import {
  * seller left blank is dropped rather than printed as "N/A", which would
  * push the useful lines off the first screen.
  */
-export function buildSellMessage(v: SellFormValues, ref: string, business: string): string {
+export function buildSellMessage(v: SellFormValues, ref: string | null, business: string): string {
   const L: string[] = [];
   const push = (label: string, ...parts: (string | null | undefined | false)[]) => {
     const body = parts.filter(Boolean).join(' · ');
@@ -27,18 +26,24 @@ export function buildSellMessage(v: SellFormValues, ref: string, business: strin
   };
 
   L.push(`*New car to sell — ${business}*`);
-  L.push(`Ref: ${ref}`);
+  // The message is built in the browser, at the moment of the press, so the
+  // row's reference does not exist yet. The owner matches a message to a row
+  // by the seller's number, which is right there on the next line.
+  if (ref) L.push(`Ref: ${ref}`);
+  L.push('');
+
+  push('Seller', v.name.trim(), v.phone, !v.whatsappSame && v.whatsapp ? `WA ${v.whatsapp}` : null);
+  push('Where', v.locality.trim() || null, v.pincode || null);
+
   L.push('');
 
   const carLine = [v.yearMfg, v.brand, v.model, v.variant].filter(Boolean).join(' ');
-  push('Car', carLine, v.fuel || null, v.transmission || null, v.body || null);
-
+  push('Car', carLine, v.fuel || null, v.transmission || null);
+  push('Number', v.regNumber ? formatRegNumber(v.regNumber) : null);
   push(
     'Run',
     v.kmDriven ? `${formatNumber(Number(v.kmDriven))} km` : null,
     ownerText(Number(v.owners)),
-    v.rtoCode ? formatRtoCode(v.rtoCode) : null,
-    v.yearReg && v.yearReg !== v.yearMfg ? `Reg ${v.yearReg}` : null,
   );
 
   push(
@@ -46,29 +51,17 @@ export function buildSellMessage(v: SellFormValues, ref: string, business: strin
     insuranceText(v),
     rcLabel(v.rcStatus),
     loanLabel(v.loanStatus),
-    `${v.keysCount} ${Number(v.keysCount) === 1 ? 'key' : 'keys'}`,
-    v.pendingChallans ? 'Challans pending' : null,
     v.fuel === 'CNG' ? (v.cngEndorsedOnRc ? 'CNG on RC' : 'CNG NOT on RC') : null,
   );
 
-  push('History', accidentLabel(v.accidentHistory), serviceLabel(v.serviceHistory));
-
   if (v.knownIssues.trim()) push('Issues', v.knownIssues.trim());
-
-  if (v.expectedPrice) push('Expects', formatPrice(Number(v.expectedPrice)));
-  if (v.reasonForSelling.trim()) push('Selling because', v.reasonForSelling.trim());
+  if (v.expectedPrice) push('Wants', formatPrice(Number(v.expectedPrice)));
 
   L.push('');
-  push(
-    'Seller',
-    v.name.trim(),
-    v.phone,
-    !v.whatsappSame && v.whatsapp ? `WA ${v.whatsapp}` : null,
-    v.email.trim() || null,
-  );
-  push('Location', v.locality.trim() || null, v.pincode || null);
-  push('Prefers', v.preferredSlot);
-  if (v.photos.length) push('Photos', `${v.photos.length} uploaded on the website`);
+  push('Free', slotText(v.slot, v.slotDays));
+  // Photographs are deliberately not mentioned. They go to the panel, where
+  // they can be opened full size; a line about them here is one more thing
+  // to read on a phone and cannot show the pictures anyway.
 
   return L.join('\n');
 }

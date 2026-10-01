@@ -4,7 +4,7 @@ import { CheckCircle2, Phone } from 'lucide-react';
 import { getSettings } from '@/lib/cars';
 import { telHref } from '@/lib/whatsapp';
 import { Reveal } from '@/components/ui/motion';
-import SuccessHandoff from '@/components/sell/SuccessHandoff';
+import WhatsAppHandoff from '@/components/sell/WhatsAppHandoff';
 
 export const metadata: Metadata = {
   title: 'We have your details',
@@ -12,32 +12,39 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * The page after a sell request.
+ *
+ * It used to do work: quote a reference number, and offer a WhatsApp button
+ * that built the summary all over again from a copy of the answers kept in
+ * sessionStorage. Both are gone. The details now reach WhatsApp from the
+ * press itself, so by the time anybody reads this the message is already
+ * open in front of them — and a reference number is for the showroom's
+ * records, not for a seller who has just been told someone will ring.
+ *
+ * What is left is a confirmation and what happens next.
+ */
 const next = [
   {
     when: 'Within a few working hours',
-    what: 'One of us calls you to confirm the details and fix a time for the inspection.',
+    what: 'One of us calls to confirm the details and fix a time.',
   },
   {
     when: 'At the inspection',
-    what: 'About 40 minutes, at the showroom or at your place. You watch the whole thing, and we tell you what we find as we find it.',
+    what: 'About 40 minutes, at the showroom or at your place. You watch the whole thing.',
   },
   {
     when: 'The same day',
-    what: 'A firm offer — one number, with the reasoning behind it. No obligation to take it.',
+    what: 'One firm price, with the reasoning behind it. No obligation to take it.',
   },
   {
     when: 'If you say yes',
-    what: 'Payment before the car leaves you. We close any running loan with the bank and file the RC transfer ourselves.',
+    what: 'Payment before the car leaves you. We close any loan and file the RC transfer ourselves.',
   },
 ];
 
-export default async function SellSuccessPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ ref?: string }>;
-}) {
-  const [{ ref }, settings] = await Promise.all([searchParams, getSettings()]);
-  const reference = ref ?? '—';
+export default async function SellSuccessPage() {
+  const settings = await getSettings();
 
   return (
     <div className="mx-auto max-w-3xl px-6 pb-32 pt-40 lg:pb-44 lg:pt-48">
@@ -47,28 +54,14 @@ export default async function SellSuccessPage({
           We have your car.
         </h1>
         <p className="mt-6 max-w-xl text-pretty text-[17px] leading-relaxed text-stone-700">
-          Thank you — the details are with us. Keep this reference handy if you
-          call; it saves you repeating everything.
+          Thank you — the details are with us, and someone will call you.
         </p>
 
-        <p className="mt-8 inline-flex items-baseline gap-3 rounded-xl border border-line bg-paper px-5 py-3.5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
-            Reference
-          </span>
-          <span className="font-display text-xl font-600 tracking-wide text-ink-900">
-            {reference}
-          </span>
-        </p>
+        {/* Clears the draft as well as offering the button. */}
+        <WhatsAppHandoff />
       </Reveal>
 
-      <Reveal delay={0.1}>
-        <div className="mt-12">
-          <SuccessHandoff settings={settings} reference={reference} />
-        </div>
-      </Reveal>
-
-      {/* ---------------- What happens next ---------------- */}
-      <section className="mt-24 border-t border-line-soft pt-14">
+      <section className="mt-20 border-t border-line-soft pt-14">
         <h2 className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-600">
           What happens next
         </h2>

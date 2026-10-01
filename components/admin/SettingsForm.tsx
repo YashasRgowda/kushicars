@@ -56,7 +56,6 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
             label="Email"
             name="email"
             type="email"
-            optional
             defaultValue={settings.email ?? ''}
             placeholder="kushicars@gmail.com"
             hint="Leave it empty and the website simply will not mention email."
@@ -89,7 +88,6 @@ export default function SettingsForm({ settings }: { settings: Settings }) {
               label="Google Maps link"
               name="map_url"
               type="url"
-              optional
               defaultValue={settings.mapUrl ?? ''}
               placeholder="https://maps.app.goo.gl/…"
               hint="From Google Maps → Share. Optional."

@@ -18,7 +18,7 @@ import { EASE } from '@/components/ui/motion';
    ================================================================== */
 
 const base =
-  'w-full rounded-xl border bg-paper px-4 py-3.5 text-[15px] text-ink-900 placeholder:text-muted outline-none transition-colors duration-200';
+  'w-full rounded-xl border bg-paper px-4 py-3.5 text-[15px] text-ink-900 placeholder:text-placeholder outline-none transition-colors duration-200';
 
 // A white field on a near-white page is only as legible as its edge, so the
 // resting border is the STRONG line rather than the default one — the weight
@@ -43,24 +43,33 @@ export function ErrorText({ id, children }: { id: string; children: React.ReactN
   );
 }
 
+/**
+ * Marks what MUST be filled, rather than what need not be.
+ *
+ * Every optional field used to carry an "OPTIONAL" flag on its right-hand
+ * edge. On a form where most fields are compulsory that is the tag repeated
+ * down the quiet half of the page, and the eye ends up reading the
+ * exceptions instead of the requirements. One asterisk on the few that are
+ * actually needed says the same thing in one character.
+ */
 export function Label({
   htmlFor,
   children,
-  optional,
+  required,
 }: {
   htmlFor?: string;
   children: React.ReactNode;
-  optional?: boolean;
+  required?: boolean;
 }) {
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-2.5 flex items-baseline justify-between gap-3 text-[13px] font-500 text-stone-800"
+      className="mb-2.5 block text-[13px] font-500 text-stone-800"
     >
-      <span>{children}</span>
-      {optional && (
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-          Optional
+      {children}
+      {required && (
+        <span className="ml-1 text-accent" aria-hidden>
+          *
         </span>
       )}
     </label>
@@ -70,7 +79,6 @@ export function Label({
 export function TextField({
   label,
   error,
-  optional,
   hint,
   prefix,
   suffix,
@@ -79,7 +87,6 @@ export function TextField({
 }: React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   error?: string;
-  optional?: boolean;
   hint?: string;
   /** Static text inside the field's left edge, e.g. ₹ or +91. */
   prefix?: string;
@@ -92,7 +99,7 @@ export function TextField({
 
   return (
     <div className={className}>
-      <Label htmlFor={id} optional={optional}>
+      <Label htmlFor={id} required={props.required}>
         {label}
       </Label>
       <div className="relative">
@@ -136,14 +143,12 @@ export function TextField({
 export function TextArea({
   label,
   error,
-  optional,
   hint,
   className = '',
   ...props
 }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string;
   error?: string;
-  optional?: boolean;
   hint?: string;
 }) {
   const uid = useId();
@@ -152,7 +157,7 @@ export function TextArea({
 
   return (
     <div className={className}>
-      <Label htmlFor={id} optional={optional}>
+      <Label htmlFor={id} required={props.required}>
         {label}
       </Label>
       <textarea
@@ -174,7 +179,6 @@ export function TextArea({
 export function SelectField({
   label,
   error,
-  optional,
   options,
   placeholder,
   className = '',
@@ -182,7 +186,6 @@ export function SelectField({
 }: React.SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
   error?: string;
-  optional?: boolean;
   options: readonly string[] | { value: string; label: string }[];
   placeholder?: string;
 }) {
@@ -193,7 +196,7 @@ export function SelectField({
 
   return (
     <div className={className}>
-      <Label htmlFor={id} optional={optional}>
+      <Label htmlFor={id} required={props.required}>
         {label}
       </Label>
       <div className="relative">
@@ -202,7 +205,7 @@ export function SelectField({
           id={id}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errId : undefined}
-          className={`${base} ${ring(!!error)} cursor-pointer appearance-none pr-11 [&>option]:bg-paper [&>option]:text-ink-900`}
+          className={`${base} ${ring(!!error)} cursor-pointer appearance-none pr-11 [&:has(option[value='']:checked)]:text-placeholder [&>option]:bg-paper [&>option]:text-ink-900`}
         >
           {placeholder && (
             <option value="" disabled>
@@ -245,6 +248,7 @@ export function Choice<T extends string>({
   error,
   columns = 1,
   hint,
+  required,
 }: {
   legend: string;
   options: { value: T; label: string; hint?: string }[];
@@ -253,13 +257,21 @@ export function Choice<T extends string>({
   error?: string;
   columns?: 1 | 2 | 3;
   hint?: string;
+  required?: boolean;
 }) {
   const uid = useId();
   const errId = `${uid}-error`;
 
   return (
     <fieldset aria-describedby={error ? errId : undefined}>
-      <legend className="mb-1 text-[13px] font-500 text-stone-800">{legend}</legend>
+      <legend className="mb-1 text-[13px] font-500 text-stone-800">
+        {legend}
+        {required && (
+          <span className="ml-1 text-accent" aria-hidden>
+            *
+          </span>
+        )}
+      </legend>
       {hint && <p className="mb-3.5 text-[13px] text-stone-600">{hint}</p>}
       <div
         className={`mt-3 grid gap-2.5 ${

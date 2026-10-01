@@ -56,7 +56,7 @@ export default function ContactForm() {
           name="name"
           autoComplete="name"
           required
-          placeholder="Name"
+          placeholder="Enter your name"
         />
         <TextField
           label="Mobile number"
@@ -67,18 +67,17 @@ export default function ContactForm() {
           required
           prefix="+91"
           maxLength={10}
-          placeholder="98765 43210"
+          placeholder="Enter your number"
         />
       </div>
 
-      <TextField label="Email" name="email" type="email" optional autoComplete="email" />
+      <TextField label="Email" name="email" type="email" autoComplete="email" />
 
       <TextArea
         label="What are you after?"
         name="message"
-        optional
         maxLength={1200}
-        placeholder="Looking for an automatic hatchback under 8 lakh, first owner if possible…"
+        placeholder="Tell us what you are looking for"
         hint="The more specific you are, the more useful our reply will be."
       />
 
